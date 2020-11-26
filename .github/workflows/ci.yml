@@ -1,0 +1,25 @@
+name: CI
+
+on: [ push ]
+
+jobs:
+    build-test:
+        runs-on: ubuntu-latest
+
+        steps:
+            -   name: Checkout Code
+                uses: actions/checkout@v2
+
+            -   name: Install Composer
+                uses: php-actions/composer@v1
+
+            -   name: Composer Normalize
+                uses: "docker://ergebnis/composer-normalize-action:latest"
+                with:
+                    args: "--indent-style tab --indent-size 1 --dry-run"
+
+            -   name: PHP CS Fixer
+                run: "./vendor/bin/php-cs-fixer fix --diff --config vendor-bin/test/vendor/21torr/php-cs/.php_cs.dist --dry-run --no-interaction"
+
+            -   name: PHPStan
+                run: "./vendor/bin/phpstan analyze -c vendor-bin/test/vendor/21torr/php-cs/phpstan/lib.neon ."

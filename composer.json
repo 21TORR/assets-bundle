@@ -1,0 +1,52 @@
+{
+	"name": "21torr/assets",
+	"type": "symfony-bundle",
+	"description": "Fully integrated high-performance asset handling, works best in conjunction with Firefly.",
+	"homepage": "https://github.com/21TORR/assets",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "21TORR",
+			"homepage": "https://www.21torr.com/"
+		}
+	],
+	"require": {
+		"php": "^7.4",
+		"21torr/bundle-helpers": "^2.0",
+		"21torr/rad": "^1.0",
+		"symfony/config": "^5.1",
+		"symfony/dependency-injection": "^5.1",
+		"symfony/http-kernel": "^5.1"
+	},
+	"require-dev": {
+		"bamarni/composer-bin-plugin": "^1.4",
+		"roave/security-advisories": "dev-master",
+		"symfony/phpunit-bridge": "^5.1"
+	},
+	"config": {
+		"sort-packages": true
+	},
+	"extra": {
+		"branch-alias": {
+			"dev-next": "1.x-dev"
+		}
+	},
+	"autoload": {
+		"psr-4": {
+			"Torr\\Assets\\": "src/"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Tests\\Torr\\Assets\\": "tests/"
+		}
+	},
+	"scripts": {
+		"post-install-cmd": [
+			"@composer bin all install --ansi"
+		],
+		"post-update-cmd": [
+			"@composer bin all update --ansi"
+		]
+	}
+}
