@@ -12,6 +12,16 @@ final class AssetsBundleConfiguration implements ConfigurationInterface
 	 */
 	public function getConfigTreeBuilder ()
 	{
-		return new TreeBuilder("assets");
+		$tree = new TreeBuilder("assets");
+
+		$tree->getRootNode()
+			->children()
+				->arrayNode("namespaces")
+					->useAttributeAsKey("name")
+					->scalarPrototype()->end()
+				->end()
+			->end();
+
+		return $tree;
 	}
 }

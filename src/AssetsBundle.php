@@ -20,6 +20,7 @@ final class AssetsBundle extends Bundle
 			new AssetsBundleConfiguration(),
 			static function (array $config, ContainerBuilder $container) : void
 			{
+				dump($config);
 			}
 		);
 	}
