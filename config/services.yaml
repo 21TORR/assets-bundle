@@ -1,0 +1,8 @@
+services:
+    _defaults:
+        autoconfigure: true
+        autowire: true
+
+    Torr\Assets\:
+        resource: ../src/*
+        exclude: ../src/{Exception,AssetsBundle.php}
