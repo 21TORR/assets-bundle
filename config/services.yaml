@@ -2,6 +2,8 @@ services:
     _defaults:
         autoconfigure: true
         autowire: true
+        bind:
+            $projectDir: '%kernel.project_dir%'
 
     Torr\Assets\:
         resource: ../src/*

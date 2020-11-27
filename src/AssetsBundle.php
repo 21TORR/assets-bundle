@@ -6,6 +6,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Torr\Assets\DependencyInjection\AssetsBundleConfiguration;
+use Torr\Assets\Namespaces\NamespaceRegistry;
 use Torr\BundleHelpers\Bundle\ConfigurableBundleExtension;
 
 final class AssetsBundle extends Bundle
@@ -20,10 +21,12 @@ final class AssetsBundle extends Bundle
 			new AssetsBundleConfiguration(),
 			static function (array $config, ContainerBuilder $container) : void
 			{
-				dump($config);
+				$container->getDefinition(NamespaceRegistry::class)
+					->setArgument('$projectNamespaces', $config["namespaces"]);
 			}
 		);
 	}
+
 
 	/**
 	 * @inheritDoc

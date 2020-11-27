@@ -18,6 +18,7 @@ final class AssetsBundleConfiguration implements ConfigurationInterface
 			->children()
 				->arrayNode("namespaces")
 					->useAttributeAsKey("name")
+					->info("The namespaces of the app. These are relative to the project dir.")
 					->scalarPrototype()->end()
 				->end()
 			->end();
