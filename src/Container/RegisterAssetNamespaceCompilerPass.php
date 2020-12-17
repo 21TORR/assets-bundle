@@ -9,6 +9,8 @@ use Torr\Assets\Namespaces\NamespaceRegistry;
 /**
  * Registers a single asset namespace.
  * Can be used in bundles to register custom namespaces.
+ *
+ * @api
  */
 final class RegisterAssetNamespaceCompilerPass implements CompilerPassInterface
 {

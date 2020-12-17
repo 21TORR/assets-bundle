@@ -2,8 +2,10 @@
 
 namespace Torr\Assets\Namespaces;
 
+use Torr\Assets\Asset\Asset;
 use Torr\Assets\Exception\Namespaces\DuplicateNamespaceException;
 use Torr\Assets\Exception\Namespaces\InvalidNamespacePathException;
+use Torr\Assets\Exception\Namespaces\UnknownNamespaceException;
 
 /**
  * The namespace registry contains all registered namespaces with the paths to the assets
@@ -12,6 +14,7 @@ final class NamespaceRegistry implements \IteratorAggregate, \Countable
 {
 	/** @var array<string, string> */
 	private array $namespaces = [];
+
 
 	/**
 	 */
@@ -38,7 +41,12 @@ final class NamespaceRegistry implements \IteratorAggregate, \Countable
 		}
 	}
 
+
 	/**
+	 * Registers a new asset namespace
+	 *
+	 * @throws InvalidNamespacePathException
+	 * @throws DuplicateNamespaceException
 	 */
 	public function register (string $name, string $path) : void
 	{
@@ -87,5 +95,37 @@ final class NamespaceRegistry implements \IteratorAggregate, \Countable
 	private function isValidPath (string $path) : bool
 	{
 		return "/" === $path[0];
+	}
+
+
+	/**
+	 * Returns the storage path to the namespace.
+	 *
+	 * @throws UnknownNamespaceException
+	 */
+	public function getNamespacePath (string $namespace) : string
+	{
+		$path = $this->namespaces[$namespace] ?? null;
+
+		if (null === $path)
+		{
+			throw new UnknownNamespaceException(\sprintf(
+				"Unknown namespace '%s'. Did you register it?",
+				$namespace
+			));
+		}
+
+		return $path;
+	}
+
+
+	/**
+	 * Returns the file path to the given asset.
+	 *
+	 * @throws UnknownNamespaceException
+	 */
+	public function getAssetFilePath (Asset $asset) : string
+	{
+		return "{$this->getNamespacePath($asset->getNamespace())}/{$asset->getPath()}";
 	}
 }

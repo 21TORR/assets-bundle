@@ -8,3 +8,9 @@ services:
     Torr\Assets\:
         resource: ../src/*
         exclude: ../src/{Exception,AssetsBundle.php}
+
+    Torr\Assets\Routing\AssetsRouteLoader:
+        tags: [routing.loader]
+
+    Torr\Assets\Storage\AssetDumper:
+        $publicDir: '%kernel.project_dir%/public'

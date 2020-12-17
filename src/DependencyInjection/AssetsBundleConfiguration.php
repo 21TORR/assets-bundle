@@ -21,6 +21,10 @@ final class AssetsBundleConfiguration implements ConfigurationInterface
 					->info("The namespaces of the app. These are relative to the project dir.")
 					->scalarPrototype()->end()
 				->end()
+				->scalarNode("output_dir")
+					->defaultValue("assets")
+					->info("The path where the files should be stored. Relative to the public dir.")
+				->end()
 			->end();
 
 		return $tree;
