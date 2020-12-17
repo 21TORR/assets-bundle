@@ -1,5 +1,5 @@
 {
     "require": {
-        "21torr/php-cs": "^2.0.2"
+        "21torr/php-cs": "^2.0.6"
     }
 }
