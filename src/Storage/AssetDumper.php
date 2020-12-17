@@ -5,6 +5,8 @@ namespace Torr\Assets\Storage;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Exception\DirectoryNotFoundException;
 use Symfony\Component\Finder\Finder;
+use Torr\Assets\Asset\Asset;
+use Torr\Assets\File\FileLoader;
 use Torr\Assets\Namespaces\NamespaceRegistry;
 
 final class AssetDumper
@@ -13,6 +15,7 @@ final class AssetDumper
 	private NamespaceRegistry $namespaceRegistry;
 	private string $publicDir;
 	private Filesystem $filesystem;
+	private FileLoader $fileLoader;
 
 	/**
 	 */
@@ -20,6 +23,7 @@ final class AssetDumper
 		AssetStorage $storage,
 		NamespaceRegistry $namespaceRegistry,
 		Filesystem $filesystem,
+		FileLoader $fileLoader,
 		string $publicDir
 	)
 	{
@@ -27,7 +31,18 @@ final class AssetDumper
 		$this->namespaceRegistry = $namespaceRegistry;
 		$this->publicDir = \rtrim($publicDir, "/");
 		$this->filesystem = $filesystem;
+		$this->fileLoader = $fileLoader;
 	}
+
+
+	/**
+	 * Clears (and removes) the dump directory
+	 */
+	public function clearDumpDirectory () : void
+	{
+		$this->filesystem->remove($this->getDumpDir());
+	}
+
 
 	/**
 	 */
@@ -48,11 +63,12 @@ final class AssetDumper
 
 			foreach ($finder as $file)
 			{
-				$targetPath = "{$this->publicDir}/{$this->storage->getOutputDir()}/{$file->getRelativePathname()}";
-				$dumpedFiles[] = $file->getRelativePathname();
+				$targetPath = "{$this->getDumpDir()}/{$namespace}/{$file->getRelativePathname()}";
 
-				//$this->filesystem->copy($file->getPathname(), $targetPath);
-				dump($targetPathS);
+				$content = $this->fileLoader->loadFile(new Asset($namespace, $file->getRelativePathname()), FileLoader::MODE_PRODUCTION);
+				$this->filesystem->dumpFile($targetPath, $content);
+
+				$dumpedFiles[] = $file->getRelativePathname();
 			}
 
 			return $dumpedFiles;
@@ -62,5 +78,14 @@ final class AssetDumper
 			// ignore missing base directories
 			return [];
 		}
+	}
+
+
+	/**
+	 * Returns the full path to the dump dir
+	 */
+	private function getDumpDir () : string
+	{
+		return "{$this->publicDir}/{$this->storage->getOutputDir()}";
 	}
 }

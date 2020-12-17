@@ -14,3 +14,6 @@ services:
 
     Torr\Assets\Storage\AssetDumper:
         $publicDir: '%kernel.project_dir%/public'
+
+    Torr\Assets\File\FileTypeRegistry:
+        $fileTypes: !tagged_iterator 'assets.file-type'

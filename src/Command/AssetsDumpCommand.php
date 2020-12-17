@@ -32,6 +32,12 @@ final class AssetsDumpCommand extends Command
 		$io = new TorrCliStyle($input, $output);
 		$io->title("Assets: Dump all assets");
 
+		$io->section("Clear dump directory");
+		$this->assetDumper->clearDumpDirectory();
+		$io->writeln("<fg=green>Done</>");
+
+		$io->newLine();
+		$io->section("Dump assets");
 		foreach ($io->createProgressBar()->iterate($this->namespaceRegistry) as $namespace => $path)
 		{
 			$this->assetDumper->dumpNamespace($namespace);
