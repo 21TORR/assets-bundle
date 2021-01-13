@@ -10,7 +10,7 @@ use Torr\Assets\Exception\Namespaces\UnknownNamespaceException;
 /**
  * The namespace registry contains all registered namespaces with the paths to the assets
  */
-final class NamespaceRegistry implements \IteratorAggregate, \Countable
+final class NamespaceRegistry
 {
 	/** @var array<string, string> */
 	private array $namespaces = [];
@@ -71,23 +71,6 @@ final class NamespaceRegistry implements \IteratorAggregate, \Countable
 		$this->namespaces[$name] = \rtrim($path, "/");
 	}
 
-	/**
-	 * @inheritDoc
-	 */
-	public function getIterator () : \Traversable
-	{
-		\uksort($this->namespaces, "strnatcasecmp");
-		return new \ArrayIterator($this->namespaces);
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function count () : int
-	{
-		return \count($this->namespaces);
-	}
-
 
 	/**
 	 * Returns whether the given path is valid
@@ -127,5 +110,14 @@ final class NamespaceRegistry implements \IteratorAggregate, \Countable
 	public function getAssetFilePath (Asset $asset) : string
 	{
 		return "{$this->getNamespacePath($asset->getNamespace())}/{$asset->getPath()}";
+	}
+
+
+	/**
+	 * Returns all registered namespaces
+	 */
+	public function getNamespaces () : array
+	{
+		return \array_keys($this->namespaces);
 	}
 }

@@ -2,36 +2,36 @@
 
 namespace Torr\Assets\Storage;
 
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Exception\DirectoryNotFoundException;
 use Symfony\Component\Finder\Finder;
 use Torr\Assets\Asset\Asset;
 use Torr\Assets\File\FileLoader;
+use Torr\Assets\File\FileTypeRegistry;
 use Torr\Assets\Namespaces\NamespaceRegistry;
 
 final class AssetDumper
 {
+	private const SKIP_DEFERRED = true;
+	private const ALL_ASSETS = false;
+
 	private AssetStorage $storage;
 	private NamespaceRegistry $namespaceRegistry;
-	private string $publicDir;
-	private Filesystem $filesystem;
 	private FileLoader $fileLoader;
+	private FileTypeRegistry $fileTypeRegistry;
 
 	/**
 	 */
 	public function __construct (
 		AssetStorage $storage,
 		NamespaceRegistry $namespaceRegistry,
-		Filesystem $filesystem,
 		FileLoader $fileLoader,
-		string $publicDir
+		FileTypeRegistry $fileTypeRegistry
 	)
 	{
 		$this->storage = $storage;
 		$this->namespaceRegistry = $namespaceRegistry;
-		$this->publicDir = \rtrim($publicDir, "/");
-		$this->filesystem = $filesystem;
 		$this->fileLoader = $fileLoader;
+		$this->fileTypeRegistry = $fileTypeRegistry;
 	}
 
 
@@ -40,52 +40,96 @@ final class AssetDumper
 	 */
 	public function clearDumpDirectory () : void
 	{
-		$this->filesystem->remove($this->getDumpDir());
+		$this->storage->clearStorage();
 	}
 
 
 	/**
+	 * Dumps all namespaces
 	 */
-	public function dumpNamespace (string $namespace) : array
+	public function dumpNamespaces (array $namespaces) : AssetMap
 	{
-		$path = $this->namespaceRegistry->getNamespacePath($namespace);
+		$assets = $this->findAssets($namespaces);
+		$map = new AssetMap();
 
-		try
+		// dump first pass (= everything without dependencies)
+		$deferred = $this->dumpAssets($map, $assets, self::SKIP_DEFERRED);
+
+		// then dump second pass (only the deferred ones)
+		$this->dumpAssets($map, $deferred, self::ALL_ASSETS);
+
+		return $map;
+	}
+
+
+	/**
+	 * Finds all assets to dump
+	 *
+	 * @return Asset[]
+	 */
+	private function findAssets (array $namespaces) : array
+	{
+		$assets = [];
+
+		foreach ($namespaces as $namespace)
 		{
-			$finder = Finder::create()
-				->in($path)
-				->files()
-				->ignoreDotFiles(true)
-				->ignoreUnreadableDirs()
-			;
+			$path = $this->namespaceRegistry->getNamespacePath($namespace);
 
-			$dumpedFiles = [];
-
-			foreach ($finder as $file)
+			try
 			{
-				$targetPath = "{$this->getDumpDir()}/{$namespace}/{$file->getRelativePathname()}";
+				$finder = Finder::create()
+					->in($path)
+					->files()
+					->ignoreDotFiles(true)
+					->ignoreUnreadableDirs()
+				;
 
-				$content = $this->fileLoader->loadFile(new Asset($namespace, $file->getRelativePathname()), FileLoader::MODE_PRODUCTION);
-				$this->filesystem->dumpFile($targetPath, $content);
 
-				$dumpedFiles[] = $file->getRelativePathname();
+				foreach ($finder as $file)
+				{
+					$asset = new Asset($namespace, $file->getRelativePathname());
+					$assets[] = $asset;
+				}
+			}
+			catch (DirectoryNotFoundException $exception)
+			{
+				// ignore missing base directories
+			}
+		}
+
+		return $assets;
+	}
+
+
+	/**
+	 * Dumps the list of given assets
+	 *
+	 * @param Asset[] $assets
+	 * @param bool $skipDeferred whether deferred assets should be skipped.
+	 *
+	 * @return Asset[] all skipped assets
+	 */
+	private function dumpAssets (AssetMap $assetMap, array $assets, bool $skipDeferred) : array
+	{
+		$skipped = [];
+
+		foreach ($assets as $asset)
+		{
+			$fileType = $this->fileTypeRegistry->getFileType($asset);
+
+			// if we should skip the deferred assets, just collect them and skip
+			if ($skipDeferred && $fileType->canHaveAssetDependencies())
+			{
+				$skipped[] = $asset;
+				continue;
 			}
 
-			return $dumpedFiles;
-		}
-		catch (DirectoryNotFoundException $exception)
-		{
-			// ignore missing base directories
-			return [];
-		}
-	}
+			$content = $this->fileLoader->loadFile($assetMap, $asset, FileLoader::MODE_PRODUCTION);
+			$storedAsset = $this->storage->storeAsset($asset, $content, $fileType->shouldHashFileName());
 
+			$assetMap->add($storedAsset);
+		}
 
-	/**
-	 * Returns the full path to the dump dir
-	 */
-	private function getDumpDir () : string
-	{
-		return "{$this->publicDir}/{$this->storage->getOutputDir()}";
+		return $skipped;
 	}
 }

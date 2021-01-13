@@ -2,7 +2,7 @@
 
 namespace Torr\Assets\File\Type;
 
-use Torr\Assets\Asset\Asset;
+use Torr\Assets\File\Data\FileProcessData;
 use Torr\Assets\File\Type\Header\FileInfoCommentGenerator;
 
 final class SvgFileType extends FileType
@@ -29,11 +29,11 @@ final class SvgFileType extends FileType
 	/**
 	 * @inheritDoc
 	 */
-	public function processForDebug (Asset $asset, string $content, string $filePath) : string
+	public function processForDebug (FileProcessData $data) : string
 	{
 		// the comment must be at the bottom, as otherwise the SVG would become invalid
-		return parent::processForDebug($asset, $content, $filePath) .
+		return parent::processForDebug($data) .
 			"\n" .
-			$this->infoComment->generateInfoComment($asset, $filePath);
+			$this->infoComment->generateInfoComment($data->getAsset(), $data->getFilePath());
 	}
 }

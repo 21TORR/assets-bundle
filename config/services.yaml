@@ -12,8 +12,8 @@ services:
     Torr\Assets\Routing\AssetsRouteLoader:
         tags: [routing.loader]
 
-    Torr\Assets\Storage\AssetDumper:
-        $publicDir: '%kernel.project_dir%/public'
-
     Torr\Assets\File\FileTypeRegistry:
         $fileTypes: !tagged_iterator 'assets.file-type'
+
+    Torr\Assets\Storage\AssetStorage:
+        $publicDir: '%kernel.project_dir%/public'

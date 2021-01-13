@@ -2,7 +2,7 @@
 
 namespace Torr\Assets\File\Type;
 
-use Torr\Assets\Asset\Asset;
+use Torr\Assets\File\Data\FileProcessData;
 use Torr\Assets\File\Type\Header\FileInfoCommentGenerator;
 
 final class CssFileType extends FileType
@@ -26,13 +26,23 @@ final class CssFileType extends FileType
 		return ["css"];
 	}
 
+
 	/**
 	 * @inheritDoc
 	 */
-	public function processForDebug (Asset $asset, string $content, string $filePath) : string
+	public function processForDebug (FileProcessData $data) : string
 	{
-		return $this->infoComment->generateInfoComment($asset, $filePath) .
+		return $this->infoComment->generateInfoComment($data->getAsset(), $data->getFilePath()) .
 			"\n".
-			parent::processForDebug($asset, $content, $filePath);
+			parent::processForDebug($data);
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function canHaveAssetDependencies () : bool
+	{
+		return true;
 	}
 }

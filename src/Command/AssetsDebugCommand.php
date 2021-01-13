@@ -58,9 +58,12 @@ final class AssetsDebugCommand extends Command
 		$rows = [];
 		$projectDir = u($this->kernel->getProjectDir());
 
-		foreach ($this->namespaceRegistry as $namespace => $rawPath)
+		$namespaces = $this->namespaceRegistry->getNamespaces();
+		\usort($namespaces, "strnatcasecmp");
+
+		foreach ($namespaces as $namespace)
 		{
-			$path = u($rawPath);
+			$path = u($this->namespaceRegistry->getNamespacePath($namespace));
 
 			if ($path->startsWith($projectDir))
 			{

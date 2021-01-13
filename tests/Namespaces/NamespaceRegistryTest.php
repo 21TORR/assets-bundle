@@ -59,7 +59,14 @@ final class NamespaceRegistryTest extends TestCase
 	public function testProjectDirPrefix (array $expected, string $projectDir, array $initialPaths) : void
 	{
 		$registry = new NamespaceRegistry($initialPaths, $projectDir);
-		self::assertEqualsCanonicalizing($expected, \iterator_to_array($registry));
+		$actual = [];
+
+		foreach ($registry->getNamespaces() as $namespace)
+        {
+            $actual[$namespace] = $registry->getNamespacePath($namespace);
+        }
+
+		self::assertEqualsCanonicalizing($expected, $actual);
 	}
 
 

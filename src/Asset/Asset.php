@@ -7,8 +7,8 @@ use Torr\Rad\Exception\UnexpectedTypeException;
 
 final class Asset
 {
-	public const NAMESPACE_REGEX = "[a-z][a-z0-9_-]*?";
-	public const PATH_REGEX = "([a-z0-9_\\-.]+/)*[a-z0-9_\\-.]+";
+	public const NAMESPACE_REGEX = "^[a-zA-Z][a-zA-Z0-9_-]*?$";
+	public const PATH_REGEX = "^([a-zA-Z0-9_\\-.]+/)*[a-zA-Z0-9_\\-.]+$";
 	private string $namespace;
 	private string $path;
 	private ?string $extension = null;
@@ -115,6 +115,4 @@ final class Asset
 
 		return $this->extension;
 	}
-
-
 }

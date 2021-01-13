@@ -15,4 +15,12 @@ final class GenericFileType extends FileType
 		// it is not defined for any extension, it should only be used as fallback generic file
 		return [];
 	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function shouldBeCompressed () : bool
+	{
+		return false;
+	}
 }

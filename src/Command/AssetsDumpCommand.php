@@ -38,10 +38,8 @@ final class AssetsDumpCommand extends Command
 
 		$io->newLine();
 		$io->section("Dump assets");
-		foreach ($io->createProgressBar()->iterate($this->namespaceRegistry) as $namespace => $path)
-		{
-			$this->assetDumper->dumpNamespace($namespace);
-		}
+		$result = $this->assetDumper->dumpNamespaces($this->namespaceRegistry->getNamespaces());
+
 
 		$io->newLine(2);
 		$io->success("All done.");
