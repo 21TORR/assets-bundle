@@ -22,7 +22,11 @@ final class AssetMapCache
 	/**
 	 * AssetMapCache constructor.
 	 */
-	public function __construct(CacheItemPoolInterface $cachePool, KernelInterface $kernel, AssetDumper $assetDumper,)
+	public function __construct(
+		CacheItemPoolInterface $cachePool,
+		KernelInterface $kernel,
+		AssetDumper $assetDumper
+	)
 	{
 		$this->cachePool = $cachePool;
 		$this->kernel = $kernel;
