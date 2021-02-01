@@ -3,11 +3,17 @@
 namespace Torr\Assets\File\Type;
 
 use Torr\Assets\File\Data\FileProcessData;
+use Torr\Assets\File\Type\Css\CssUrlRewriter;
+use Torr\Assets\File\Type\Css\CssUrlParser;
 use Torr\Assets\File\Type\Header\FileInfoCommentGenerator;
 
 final class CssFileType extends FileType
 {
 	private FileInfoCommentGenerator $infoComment;
+
+	/** @required */
+	public CssUrlRewriter $urlRewriter;
+
 
 	/**
 	 * @inheritDoc
@@ -34,7 +40,16 @@ final class CssFileType extends FileType
 	{
 		return $this->infoComment->generateInfoComment($data->getAsset(), $data->getFilePath()) .
 			"\n".
-			parent::processForDebug($data);
+			$this->urlRewriter->rewrite($data->getContent(), true);
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function processForProduction (FileProcessData $data) : string
+	{
+		return $this->urlRewriter->rewrite($data->getContent(), false);
 	}
 
 

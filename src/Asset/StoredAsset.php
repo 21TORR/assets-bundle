@@ -31,4 +31,11 @@ final class StoredAsset
 	{
 		return $this->asset->toAssetPath();
 	}
+
+	/**
+	 */
+	public function getStoredFilePath() : string
+	{
+		return $this->storedFilePath;
+	}
 }
