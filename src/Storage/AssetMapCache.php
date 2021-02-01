@@ -63,7 +63,7 @@ final class AssetMapCache
 	 */
 	public function getAssetMap() : ?AssetMap
 	{
-		if($this->kernel->isDebug() === false) {
+		if($this->kernel->isDebug() === true) {
 			$this->assetDumper->clearDumpDirectory();
 			return new AssetMap();
 		}
