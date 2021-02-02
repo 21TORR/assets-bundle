@@ -49,8 +49,7 @@ final class AssetsDumpCommand extends Command
 
 		$io->newLine();
 		$io->section("Dump assets");
-		$result = $this->assetDumper->dumpNamespaces($this->namespaceRegistry->getNamespaces());
-		$this->assetMapCache->setMapCache($result);
+		$this->assetDumper->dumpNamespaces($this->namespaceRegistry->getNamespaces());
 
 		$io->newLine(2);
 		$io->success("All done.");

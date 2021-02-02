@@ -17,7 +17,7 @@ final class AssetMapCache
 
 	private KernelInterface $kernel;
 
-	private AssetDumper $assetDumper;
+	private AssetStorage $storage;
 
 	/**
 	 * AssetMapCache constructor.
@@ -25,12 +25,12 @@ final class AssetMapCache
 	public function __construct(
 		CacheItemPoolInterface $cachePool,
 		KernelInterface $kernel,
-		AssetDumper $assetDumper
+		AssetStorage $storage
 	)
 	{
 		$this->cachePool = $cachePool;
 		$this->kernel = $kernel;
-		$this->assetDumper = $assetDumper;
+		$this->storage = $storage;
 	}
 
 	/**
@@ -64,7 +64,7 @@ final class AssetMapCache
 	public function getAssetMap() : ?AssetMap
 	{
 		if($this->kernel->isDebug() === true) {
-			$this->assetDumper->clearDumpDirectory();
+			$this->storage->clearStorage();
 			return new AssetMap();
 		}
 
