@@ -18,6 +18,7 @@ final class AssetDumper
 	private NamespaceRegistry $namespaceRegistry;
 	private FileLoader $fileLoader;
 	private FileTypeRegistry $fileTypeRegistry;
+	private AssetMapCache $assetMapCache;
 
 	/**
 	 */
@@ -25,13 +26,15 @@ final class AssetDumper
 		AssetStorage $storage,
 		NamespaceRegistry $namespaceRegistry,
 		FileLoader $fileLoader,
-		FileTypeRegistry $fileTypeRegistry
+		FileTypeRegistry $fileTypeRegistry,
+		AssetMapCache $assetMapCache
 	)
 	{
 		$this->storage = $storage;
 		$this->namespaceRegistry = $namespaceRegistry;
 		$this->fileLoader = $fileLoader;
 		$this->fileTypeRegistry = $fileTypeRegistry;
+		$this->assetMapCache = $assetMapCache;
 	}
 
 
@@ -55,8 +58,14 @@ final class AssetDumper
 		// dump first pass (= everything without dependencies)
 		$deferred = $this->dumpAssets($map, $assets, self::SKIP_DEFERRED);
 
+		// save first draft in cache
+		$this->assetMapCache->setMapCache($map);
+
 		// then dump second pass (only the deferred ones)
 		$this->dumpAssets($map, $deferred, self::ALL_ASSETS);
+
+		// save final map in cache
+		$this->assetMapCache->setMapCache($map);
 
 		return $map;
 	}
