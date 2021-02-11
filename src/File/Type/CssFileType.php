@@ -4,7 +4,6 @@ namespace Torr\Assets\File\Type;
 
 use Torr\Assets\File\Data\FileProcessData;
 use Torr\Assets\File\Type\Css\CssUrlRewriter;
-use Torr\Assets\File\Type\Css\CssUrlParser;
 use Torr\Assets\File\Type\Header\FileInfoCommentGenerator;
 
 final class CssFileType extends FileType
@@ -39,8 +38,8 @@ final class CssFileType extends FileType
 	public function processForDebug (FileProcessData $data) : string
 	{
 		return $this->infoComment->generateInfoComment($data->getAsset(), $data->getFilePath()) .
-			"\n".
-			$this->urlRewriter->rewrite($data->getContent(), true);
+			"\n" .
+			$this->urlRewriter->rewrite($data->getContent());
 	}
 
 
@@ -49,7 +48,7 @@ final class CssFileType extends FileType
 	 */
 	public function processForProduction (FileProcessData $data) : string
 	{
-		return $this->urlRewriter->rewrite($data->getContent(), false);
+		return $this->urlRewriter->rewrite($data->getContent());
 	}
 
 
@@ -59,5 +58,13 @@ final class CssFileType extends FileType
 	public function canHaveAssetDependencies () : bool
 	{
 		return true;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getEmbedCode (string $path, array $parameter = []) : string
+	{
+		return "<link rel=\"stylesheet\" href=\"{$path}\" />";
 	}
 }

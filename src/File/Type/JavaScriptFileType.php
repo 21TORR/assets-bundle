@@ -45,5 +45,21 @@ final class JavaScriptFileType extends FileType
 		return false;
 	}
 
+	/**
+	 * @inheritDoc
+	 */
+	public function getEmbedCode (string $path, array $parameter = []) : string
+	{
+		if ($parameter['modern'])
+		{
+			return "<script type=\"module\" src=\"{$path}\" ></script>";
+		}
 
+		if ($parameter['legacy'])
+		{
+			return "<script nomodule=\"true\" src=\"{$path}\" ></script>";
+		}
+
+		return "<script src=\"{$path}\" ></script>";
+	}
 }

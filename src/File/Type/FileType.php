@@ -2,10 +2,8 @@
 
 namespace Torr\Assets\File\Type;
 
-use Torr\Assets\Asset\Asset;
-use Torr\Assets\Asset\StoredAsset;
+use Torr\Assets\Exception\File\Type\NoEmbedSupport;
 use Torr\Assets\File\Data\FileProcessData;
-use Torr\Assets\Storage\AssetMap;
 
 abstract class FileType
 {
@@ -56,5 +54,12 @@ abstract class FileType
 	public function canHaveAssetDependencies () : bool
 	{
 		return false;
+	}
+
+	/**
+	 */
+	public function getEmbedCode (string $path, array $parameter = []) : string
+	{
+		throw new NoEmbedSupport();
 	}
 }

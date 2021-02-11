@@ -7,6 +7,7 @@ use Symfony\Component\Finder\Finder;
 use Torr\Assets\Asset\Asset;
 use Torr\Assets\File\FileLoader;
 use Torr\Assets\File\FileTypeRegistry;
+use Torr\Assets\Manager\AssetsManager;
 use Torr\Assets\Namespaces\NamespaceRegistry;
 
 final class AssetDumper
@@ -18,7 +19,7 @@ final class AssetDumper
 	private NamespaceRegistry $namespaceRegistry;
 	private FileLoader $fileLoader;
 	private FileTypeRegistry $fileTypeRegistry;
-	private AssetMapCache $assetMapCache;
+	private AssetsManager $assetsManager;
 
 	/**
 	 */
@@ -27,14 +28,14 @@ final class AssetDumper
 		NamespaceRegistry $namespaceRegistry,
 		FileLoader $fileLoader,
 		FileTypeRegistry $fileTypeRegistry,
-		AssetMapCache $assetMapCache
+		AssetsManager $assetsManager
 	)
 	{
 		$this->storage = $storage;
 		$this->namespaceRegistry = $namespaceRegistry;
 		$this->fileLoader = $fileLoader;
 		$this->fileTypeRegistry = $fileTypeRegistry;
-		$this->assetMapCache = $assetMapCache;
+		$this->assetsManager = $assetsManager;
 	}
 
 
@@ -59,13 +60,13 @@ final class AssetDumper
 		$deferred = $this->dumpAssets($map, $assets, self::SKIP_DEFERRED);
 
 		// save first draft in cache
-		$this->assetMapCache->setMapCache($map);
+		$this->assetsManager->setAssetMap($map);
 
 		// then dump second pass (only the deferred ones)
 		$this->dumpAssets($map, $deferred, self::ALL_ASSETS);
 
 		// save final map in cache
-		$this->assetMapCache->setMapCache($map);
+		$this->assetsManager->setAssetMap($map);
 
 		return $map;
 	}
@@ -90,8 +91,7 @@ final class AssetDumper
 					->in($path)
 					->files()
 					->ignoreDotFiles(true)
-					->ignoreUnreadableDirs()
-				;
+					->ignoreUnreadableDirs();
 
 
 				foreach ($finder as $file)

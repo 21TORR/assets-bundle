@@ -12,6 +12,8 @@ final class StoredAsset
 	private string $hashAlgorithm;
 	private string $storedFilePath;
 
+	/**
+	 */
 	public function __construct (
 		Asset $asset,
 		string $hash,
@@ -34,8 +36,15 @@ final class StoredAsset
 
 	/**
 	 */
-	public function getStoredFilePath() : string
+	public function getStoredFilePath () : string
 	{
 		return $this->storedFilePath;
+	}
+
+	/**
+	 */
+	public function getAsset () : Asset
+	{
+		return $this->asset;
 	}
 }
