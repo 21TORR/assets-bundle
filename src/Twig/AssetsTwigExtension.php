@@ -23,8 +23,8 @@ class AssetsTwigExtension extends AbstractExtension
 	public function getFunctions () : array
 	{
 		return [
-			new TwigFunction('assets_url', [$this->assetsHelper, 'getUrl']),
-			new TwigFunction('assets_embed', [$this->assetsHelper, 'embed'], ["is_safe" => ["html"]]),
+			new TwigFunction('asset', [$this->assetsHelper, 'getUrl']),
+			new TwigFunction('asset_embed', [$this->assetsHelper, 'embed'], ["is_safe" => ["html"]]),
 		];
 	}
 }
