@@ -50,12 +50,12 @@ final class JavaScriptFileType extends FileType
 	 */
 	public function getEmbedCode (string $path, array $parameter = []) : string
 	{
-		if ($parameter['modern'])
+		if (array_key_exists('modern', $parameter) && $parameter['modern'])
 		{
 			return "<script type=\"module\" src=\"{$path}\" ></script>";
 		}
 
-		if ($parameter['legacy'])
+		if (array_key_exists('legacy', $parameter) && $parameter['legacy'])
 		{
 			return "<script nomodule=\"true\" src=\"{$path}\" ></script>";
 		}
