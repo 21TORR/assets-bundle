@@ -2,10 +2,9 @@
 
 namespace Torr\Assets\File\Type;
 
-use Torr\Assets\Asset\Asset;
-use Torr\Assets\Asset\StoredAsset;
+use Torr\Assets\Exception\File\Type\NoEmbedSupport;
 use Torr\Assets\File\Data\FileProcessData;
-use Torr\Assets\Storage\AssetMap;
+use Torr\HtmlBuilder\Node\HtmlElement;
 
 abstract class FileType
 {
@@ -54,6 +53,21 @@ abstract class FileType
 	 * Return whether the files of this type can have dependencies to other assets
 	 */
 	public function canHaveAssetDependencies () : bool
+	{
+		return false;
+	}
+
+	/**
+	 */
+	public function createHtmlIncludeElement (string $path, array $parameter = []) : HtmlElement
+	{
+		throw new NoEmbedSupport();
+	}
+
+	/**
+	 * Returns whether the file can directly be embedded in to the page.
+	 */
+	public function isEmbeddable () : bool
 	{
 		return false;
 	}

@@ -47,6 +47,7 @@ final class Asset
 
 
 	/**
+	 * @param string|Asset $assetPath
 	 */
 	public static function create ($assetPath) : self
 	{
@@ -67,7 +68,7 @@ final class Asset
 
 			$parts = \explode("/", $assetPath, 2);
 
-			if (count($parts) !== 2)
+			if (2 !== \count($parts))
 			{
 				throw new InvalidAssetException(\sprintf(
 					"Invalid asset path: '%s'. Must be '@namespace/path'",

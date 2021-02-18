@@ -3,6 +3,11 @@
 namespace Torr\Assets\Helper;
 
 use Torr\Assets\Asset\Asset;
+use Torr\Assets\Exception\File\NotEmbeddableAssetException;
+use Torr\Assets\File\FileLoader;
+use Torr\Assets\File\FileTypeRegistry;
+use Torr\Assets\Html\AssetHtmlIncluder;
+use Torr\Assets\Routing\AssetUrlGenerator;
 
 /**
  * Convenience wrapper around commonly used asset functions.
@@ -12,26 +17,60 @@ use Torr\Assets\Asset\Asset;
  */
 final class AssetsHelper
 {
+	private FileTypeRegistry $fileTypeRegistry;
+	private FileLoader $fileLoader;
+	private AssetHtmlIncluder $assetHtmlIncluder;
+	private AssetUrlGenerator $assetUrlGenerator;
+
 	/**
-	 * Returns the embed code for the given asset
-	 *
-	 * @param Asset|string $asset
 	 */
-	public function embed ($asset) : string
+	public function __construct (
+		FileTypeRegistry $fileTypeRegistry,
+		FileLoader $fileLoader,
+		AssetHtmlIncluder $assetHtmlIncluder,
+		AssetUrlGenerator $assetUrlGenerator
+	)
 	{
-		$value = Asset::create($asset);
-		return "embed";
+		$this->fileTypeRegistry = $fileTypeRegistry;
+		$this->fileLoader = $fileLoader;
+		$this->assetHtmlIncluder = $assetHtmlIncluder;
+		$this->assetUrlGenerator = $assetUrlGenerator;
+	}
+
+	/**
+	 * Returns the embed code for the given asset(s)
+	 */
+	public function embed (string $assetPath) : string
+	{
+		$asset = Asset::create($assetPath);
+		$fileType = $this->fileTypeRegistry->getFileType($asset);
+
+		if (!$fileType->isEmbeddable())
+		{
+			throw new NotEmbeddableAssetException(\sprintf(
+				"File '%s' of type '%s' is not embeddable.",
+				$assetPath,
+				\get_class($fileType)
+			));
+		}
+
+		return $this->fileLoader->loadUnprocessed($asset);
+	}
+
+	/**
+	 * @param string[] $assetPaths
+	 */
+	public function includeAssetsInHtml (array $assetPaths) : string
+	{
+		return $this->assetHtmlIncluder->generateHtmlIncludeCodeForAssets($assetPaths);
 	}
 
 
 	/**
 	 * Returns the url to the given asset
-	 *
-	 * @param Asset|string $asset
 	 */
-	public function getUrl ($asset) : string
+	public function getUrl (string $assetPath) : string
 	{
-		$value = Asset::create($asset);
-		return "url";
+		return $this->assetUrlGenerator->getUrl(Asset::create($assetPath));
 	}
 }

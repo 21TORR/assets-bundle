@@ -15,32 +15,34 @@ use Torr\Rad\Controller\BaseController;
 final class EmbedController extends BaseController
 {
 	public function embed (
-	    FileLoader $fileLoader,
-	    KernelInterface $kernel,
-	    MimeTypesInterface $mimeTypes,
-	    string $namespace,
-        string $path
-    )
+		FileLoader $fileLoader,
+		KernelInterface $kernel,
+		MimeTypesInterface $mimeTypes,
+		string $namespace,
+		string $path
+	) : Response
 	{
-        try
-        {
-            $asset = new Asset($namespace, $path);
-            $mode = $kernel->isDebug() ? FileLoader::MODE_DEBUG : FileLoader::MODE_PRODUCTION;
+		try
+		{
+			$asset = new Asset($namespace, $path);
+			$assetMap = new AssetMap();
 
-            return new Response(
-                $fileLoader->loadFile(new AssetMap(), $asset, $mode),
-                200,
-                [
-                    "Content-Type" => $mimeTypes->getMimeTypes($asset->getExtension())[0] ?? "application/octet-stream",
-                ]
-            );
-        }
-	    catch (FileNotFoundException | InvalidAssetException $exception)
-        {
-            throw $this->createNotFoundException(
-                "Asset not found: @{$namespace}/{$path}",
-                $exception
-            );
-        }
+			return new Response(
+				$kernel->isDebug()
+					? $fileLoader->loadForDebug($assetMap, $asset)
+					: $fileLoader->loadForProduction($assetMap, $asset),
+				200,
+				[
+					"Content-Type" => $mimeTypes->getMimeTypes((string) $asset->getExtension())[0] ?? "application/octet-stream",
+				]
+			);
+		}
+		catch (FileNotFoundException | InvalidAssetException $exception)
+		{
+			throw $this->createNotFoundException(
+				"Asset not found: @{$namespace}/{$path}",
+				$exception
+			);
+		}
 	}
 }

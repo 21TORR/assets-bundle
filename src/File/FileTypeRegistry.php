@@ -18,7 +18,7 @@ final class FileTypeRegistry
 	{
 		$this->genericFileType = $genericFileType ?? new GenericFileType();
 
- 		foreach ($fileTypes as $fileType)
+		foreach ($fileTypes as $fileType)
 		{
 			$this->registerFileType($fileType);
 		}

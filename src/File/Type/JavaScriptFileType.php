@@ -4,6 +4,7 @@ namespace Torr\Assets\File\Type;
 
 use Torr\Assets\File\Data\FileProcessData;
 use Torr\Assets\File\Type\Header\FileInfoCommentGenerator;
+use Torr\HtmlBuilder\Node\HtmlElement;
 
 final class JavaScriptFileType extends FileType
 {
@@ -46,4 +47,33 @@ final class JavaScriptFileType extends FileType
 	}
 
 
+	/**
+	 * @inheritDoc
+	 */
+	public function createHtmlIncludeElement (string $path, array $parameter = []) : HtmlElement
+	{
+		$element = new HtmlElement("script", [
+			"src" => $path,
+		]);
+
+		if (isset($parameter['modern']))
+		{
+			$element->getAttributes()->set("type", "module");
+		}
+		elseif (isset($parameter['legacy']))
+		{
+			$element->getAttributes()->set("nomodule", true);
+		}
+
+		return $element;
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function isEmbeddable () : bool
+	{
+		return true;
+	}
 }

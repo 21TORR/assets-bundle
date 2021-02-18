@@ -4,23 +4,22 @@ namespace Torr\Assets\File\Type;
 
 use Torr\Assets\File\Data\FileProcessData;
 use Torr\Assets\File\Type\Css\CssUrlRewriter;
-use Torr\Assets\File\Type\Css\CssUrlParser;
 use Torr\Assets\File\Type\Header\FileInfoCommentGenerator;
+use Torr\HtmlBuilder\Node\HtmlElement;
 
 final class CssFileType extends FileType
 {
 	private FileInfoCommentGenerator $infoComment;
-
-	/** @required */
-	public CssUrlRewriter $urlRewriter;
+	private CssUrlRewriter $urlRewriter;
 
 
 	/**
 	 * @inheritDoc
 	 */
-	public function __construct ()
+	public function __construct (CssUrlRewriter $urlRewriter)
 	{
 		$this->infoComment = new FileInfoCommentGenerator("/*", "*/");
+		$this->urlRewriter = $urlRewriter;
 	}
 
 
@@ -39,8 +38,8 @@ final class CssFileType extends FileType
 	public function processForDebug (FileProcessData $data) : string
 	{
 		return $this->infoComment->generateInfoComment($data->getAsset(), $data->getFilePath()) .
-			"\n".
-			$this->urlRewriter->rewrite($data->getContent(), true);
+			"\n" .
+			$this->urlRewriter->rewrite($data->getContent());
 	}
 
 
@@ -49,7 +48,7 @@ final class CssFileType extends FileType
 	 */
 	public function processForProduction (FileProcessData $data) : string
 	{
-		return $this->urlRewriter->rewrite($data->getContent(), false);
+		return $this->urlRewriter->rewrite($data->getContent());
 	}
 
 
@@ -57,6 +56,25 @@ final class CssFileType extends FileType
 	 * @inheritDoc
 	 */
 	public function canHaveAssetDependencies () : bool
+	{
+		return true;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function createHtmlIncludeElement (string $path, array $parameter = []) : HtmlElement
+	{
+		return new HtmlElement("link", [
+			"rel" => "stylesheet",
+			"href" => $path,
+		]);
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function isEmbeddable () : bool
 	{
 		return true;
 	}

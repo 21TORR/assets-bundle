@@ -10,9 +10,6 @@ use Torr\Assets\Storage\AssetMap;
 
 final class FileLoader
 {
-	public const MODE_PRODUCTION = true;
-	public const MODE_DEBUG = false;
-	public const MODE_UNTOUCHED = null;
 	private NamespaceRegistry $namespaceRegistry;
 	private FileTypeRegistry $fileTypeRegistry;
 
@@ -25,12 +22,46 @@ final class FileLoader
 	}
 
 	/**
-	 * Loads the file content
+	 * Loads the file for production usage
 	 */
-	public function loadFile (AssetMap $assetMap, Asset $asset, ?bool $mode)
+	public function loadForProduction (AssetMap $assetMap, Asset $asset) : string
+	{
+		[$filePath, $content] = $this->fetchFileContents($asset);
+		$processData = new FileProcessData($asset, $content, $filePath, $assetMap);
+		$fileType = $this->fileTypeRegistry->getFileType($asset);
+
+		return $fileType->processForProduction($processData);
+	}
+
+
+	/**
+	 * Loads the file for debug usage
+	 */
+	public function loadForDebug (AssetMap $assetMap, Asset $asset) : string
+	{
+		[$filePath, $content] = $this->fetchFileContents($asset);
+		$processData = new FileProcessData($asset, $content, $filePath, $assetMap);
+		$fileType = $this->fileTypeRegistry->getFileType($asset);
+
+		return $fileType->processForDebug($processData);
+	}
+
+
+	/**
+	 * Loads the unprocessed file contents
+	 */
+	public function loadUnprocessed (Asset $asset) : string
+	{
+		return $this->fetchFileContents($asset)[1];
+	}
+
+
+	/**
+	 *
+	 */
+	private function fetchFileContents (Asset $asset) : array
 	{
 		$filePath = $this->namespaceRegistry->getAssetFilePath($asset);
-		$fileType = $this->fileTypeRegistry->getFileType($asset);
 		$content = @\file_get_contents($filePath);
 
 		if (false === $content)
@@ -43,15 +74,11 @@ final class FileLoader
 			));
 		}
 
-		if (self::MODE_UNTOUCHED !== $mode)
-		{
-			$processData = new FileProcessData($asset, $content, $filePath, $assetMap);
+		return [$filePath, $content];
+	}
 
-			return self::MODE_PRODUCTION === $mode
-				? $fileType->processForProduction($processData)
-				: $fileType->processForDebug($processData);
-		}
+	public function loadFile () : void
+	{
 
-		return $content;
 	}
 }

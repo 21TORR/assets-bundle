@@ -6,8 +6,8 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
-use Torr\Assets\File\FileTypeRegistry;
 use function Symfony\Component\String\u;
+use Torr\Assets\File\FileTypeRegistry;
 use Torr\Assets\Namespaces\NamespaceRegistry;
 use Torr\Rad\Command\TorrCliStyle;
 
@@ -65,7 +65,7 @@ final class AssetsDebugCommand extends Command
 		{
 			$path = u($this->namespaceRegistry->getNamespacePath($namespace));
 
-			if ($path->startsWith($projectDir))
+			if ($path->startsWith((string) $projectDir))
 			{
 				$path = $path
 					->slice($projectDir->length())
@@ -94,7 +94,7 @@ final class AssetsDebugCommand extends Command
 	/**
 	 * Prints all file types
 	 */
-	private function printFileTypes (TorrCliStyle $io)
+	private function printFileTypes (TorrCliStyle $io) : void
 	{
 		$io->section("File Types");
 		$extensionMapping = $this->fileTypeRegistry->getExtensionMapping();
@@ -105,7 +105,7 @@ final class AssetsDebugCommand extends Command
 		{
 			$rows[] = [
 				"<fg=yellow>.{$fileExtension}</>",
-				\get_class($fileType)
+				\get_class($fileType),
 			];
 		}
 
