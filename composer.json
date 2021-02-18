@@ -14,6 +14,7 @@
 		"php": "^7.4 || ^8.0",
 		"ext-json": "*",
 		"21torr/bundle-helpers": "^2.1",
+		"21torr/html-builder": "^1.0",
 		"21torr/rad": "^1.1",
 		"symfony/cache": "^5.2",
 		"symfony/config": "^5.2",

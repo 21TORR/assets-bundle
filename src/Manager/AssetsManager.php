@@ -71,7 +71,7 @@ final class AssetsManager
 
 	/**
 	 */
-	public function getAssetMap () : ?AssetMap
+	public function getAssetMap () : AssetMap
 	{
 		$assetMap = $this->cacheManager->getCache(CacheManager::ASSET_MAP_CACHE_KEY);
 

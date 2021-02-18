@@ -25,6 +25,7 @@ class AssetsTwigExtension extends AbstractExtension
 		return [
 			new TwigFunction('asset', [$this->assetsHelper, 'getUrl']),
 			new TwigFunction('asset_embed', [$this->assetsHelper, 'embed'], ["is_safe" => ["html"]]),
+			new TwigFunction('assets_include', [$this->assetsHelper, 'includeAssetsInHtml'], ["is_safe" => ["html"]]),
 		];
 	}
 }

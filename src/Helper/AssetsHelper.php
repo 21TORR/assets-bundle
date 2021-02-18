@@ -2,16 +2,13 @@
 
 namespace Torr\Assets\Helper;
 
-use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Torr\Assets\Asset\Asset;
-use Torr\Assets\Asset\StoredAsset;
-use Torr\Assets\Dependency\DependencyHelper;
+use Torr\Assets\Exception\File\NotEmbeddableAssetException;
 use Torr\Assets\File\FileLoader;
 use Torr\Assets\File\FileTypeRegistry;
-use Torr\Assets\Manager\AssetsManager;
-use Torr\Assets\Routing\AssetsRouteLoader;
-use Torr\Assets\Storage\AssetStorage;
+use Torr\Assets\Html\AssetHtmlIncluder;
+use Torr\Assets\Html\AssetHtmlLinker;
+use Torr\Assets\Routing\AssetUrlGenerator;
 
 /**
  * Convenience wrapper around commonly used asset functions.
@@ -21,125 +18,62 @@ use Torr\Assets\Storage\AssetStorage;
  */
 final class AssetsHelper
 {
-	/** @required */
-	public DependencyHelper $dependencyHelper;
-
-	private AssetsManager $assetsManager;
-
 	private FileTypeRegistry $fileTypeRegistry;
-
-	private KernelInterface $kernel;
-
-	private AssetStorage $assetStorage;
-
-	private UrlGeneratorInterface $router;
-
 	private FileLoader $fileLoader;
+	private AssetHtmlIncluder $assetHtmlIncluder;
+	private AssetUrlGenerator $assetUrlGenerator;
 
 	/**
 	 */
 	public function __construct (
 		FileTypeRegistry $fileTypeRegistry,
-		AssetsManager $assetsManager,
-		KernelInterface $kernelInterface,
-		AssetStorage $assetStorage,
-		UrlGeneratorInterface $router,
 		FileLoader $fileLoader,
+		AssetHtmlIncluder $assetHtmlIncluder,
+		AssetUrlGenerator $assetUrlGenerator
 	)
 	{
 		$this->fileTypeRegistry = $fileTypeRegistry;
-		$this->assetsManager = $assetsManager;
-		$this->kernel = $kernelInterface;
-		$this->assetStorage = $assetStorage;
-		$this->router = $router;
 		$this->fileLoader = $fileLoader;
+		$this->assetHtmlIncluder = $assetHtmlIncluder;
+		$this->assetUrlGenerator = $assetUrlGenerator;
 	}
 
 	/**
 	 * Returns the embed code for the given asset(s)
 	 *
-	 * @param array|string $value
+	 * @param string $assetPath
 	 */
-	public function embed ($value) : string
+	public function embed (string $assetPath) : string
 	{
-		$returnValue = "";
+		$asset = Asset::create($assetPath);
+		$fileType = $this->fileTypeRegistry->getFileType($asset);
 
-		if (is_array($value))
+		if (!$fileType->isEmbeddable())
 		{
-			foreach ($value as $item)
-			{
-				$returnValue .= $this->embed($item);
-			}
-		}
-		else
-		{
-			$asset = Asset::create($value);
-
-			if ($asset->getExtension() === "js" && $this->dependencyHelper->isCollectionAvailable($value))
-			{
-				$returnValue .= $this->dependencyHelper->getJavaScriptCollectionSnippet($value);
-			}
-			else
-			{
-				$storedAsset = $this->assetsManager->getAssetMap()->get($value);
-
-				if (null !== $storedAsset)
-				{
-					$fileType = $this->fileTypeRegistry->getFileType($storedAsset->getAsset());
-
-					if ($asset->getExtension() === "svg")
-					{
-						$returnValue .= $this->fileLoader->loadFile($this->assetsManager->getAssetMap(), $asset, $this->kernel->isDebug());
-					}
-					else
-					{
-						$path = $this->buildUrl($storedAsset);
-						$returnValue .= $fileType->getEmbedCode($path);
-					}
-				}
-			}
+			throw new NotEmbeddableAssetException(\sprintf(
+				"File '%s' of type '%s' is not embeddable.",
+				$assetPath,
+				\get_class($fileType)
+			));
 		}
 
-		return $returnValue;
+		return $this->fileLoader->loadUnprocessed($asset);
+	}
+
+	/**
+	 * @param string[] $assetPaths
+	 */
+	public function includeAssetsInHtml (array $assetPaths) : string
+	{
+		return $this->assetHtmlIncluder->generateHtmlIncludeCodeForAssets($assetPaths);
 	}
 
 
 	/**
 	 * Returns the url to the given asset
 	 */
-	public function getUrl (string $value) : string
+	public function getUrl (string $assetPath) : string
 	{
-		$storedAsset = $this->assetsManager->getAssetMap()->get($value);
-		return $storedAsset ? $this->buildUrl($storedAsset) : "";
-	}
-
-	/**
-	 * Build the url to the given StoredAsset
-	 */
-	public function buildUrl (StoredAsset $asset) : string
-	{
-		// TODO build full url e.g. https://example.com/{$this->path}
-		return $this->getPath($asset);
-	}
-
-	/**
-	 * Returns the path of the given StoredAsset
-	 */
-	public function getPath (StoredAsset $asset) : string
-	{
-		// in dev/debug mode use dynamic route
-		// in prod mode use static file
-		if ($this->kernel->isDebug())
-		{
-			return $this->router->generate(
-				AssetsRouteLoader::ROUTE_NAME,
-				[
-					'namespace' => $asset->getAsset()->getNamespace(),
-					'path' => $asset->getAsset()->getPath(),
-				]
-			);
-		}
-
-		return "/{$this->assetStorage->getOutputDir()}/{$asset->getStoredFilePath()}";
+		return $this->assetUrlGenerator->getUrl(Asset::create($assetPath));
 	}
 }

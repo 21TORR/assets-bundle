@@ -133,7 +133,7 @@ final class AssetDumper
 				continue;
 			}
 
-			$content = $this->fileLoader->loadFile($assetMap, $asset, FileLoader::MODE_PRODUCTION);
+			$content = $this->fileLoader->loadForProduction($assetMap, $asset);
 			$storedAsset = $this->storage->storeAsset($asset, $content, $fileType->shouldHashFileName());
 
 			$assetMap->add($storedAsset);

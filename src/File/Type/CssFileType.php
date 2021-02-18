@@ -5,6 +5,7 @@ namespace Torr\Assets\File\Type;
 use Torr\Assets\File\Data\FileProcessData;
 use Torr\Assets\File\Type\Css\CssUrlRewriter;
 use Torr\Assets\File\Type\Header\FileInfoCommentGenerator;
+use Torr\HtmlBuilder\Node\HtmlElement;
 
 final class CssFileType extends FileType
 {
@@ -63,8 +64,19 @@ final class CssFileType extends FileType
 	/**
 	 * @inheritDoc
 	 */
-	public function getEmbedCode (string $path, array $parameter = []) : string
+	public function createHtmlIncludeElement (string $path, array $parameter = []) : HtmlElement
 	{
-		return "<link rel=\"stylesheet\" href=\"{$path}\" />";
+		return new HtmlElement("link", [
+			"rel" => "stylesheet",
+			"href" => $path,
+		]);
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function isEmbeddable () : bool
+	{
+		return true;
 	}
 }

@@ -25,10 +25,12 @@ final class EmbedController extends BaseController
         try
         {
             $asset = new Asset($namespace, $path);
-            $mode = $kernel->isDebug() ? FileLoader::MODE_DEBUG : FileLoader::MODE_PRODUCTION;
+            $assetMap = new AssetMap();
 
             return new Response(
-                $fileLoader->loadFile(new AssetMap(), $asset, $mode),
+				$kernel->isDebug()
+					? $fileLoader->loadForDebug($assetMap, $asset)
+					: $fileLoader->loadForProduction($assetMap, $asset),
                 200,
                 [
                     "Content-Type" => $mimeTypes->getMimeTypes($asset->getExtension())[0] ?? "application/octet-stream",
