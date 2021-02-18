@@ -18,7 +18,7 @@ final class AssetsManager
 	public function __construct (
 		NamespaceRegistry $namespaceRegistry,
 		AssetDumper $assetDumper,
-		CacheManager $cacheManager,
+		CacheManager $cacheManager
 	)
 	{
 		$this->namespaceRegistry = $namespaceRegistry;
