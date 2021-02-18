@@ -20,4 +20,11 @@ final class AssetMap
 	{
 		$this->map[$asset->toAssetPath()] = $asset;
 	}
+
+	/**
+	 */
+	public function get(string $key) : ?StoredAsset
+	{
+		return $this->map[$key] ?? null;
+	}
 }
