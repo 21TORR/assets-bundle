@@ -2,24 +2,26 @@
 
 namespace Torr\Assets\File\Type;
 
+use Psr\Container\ContainerInterface;
+use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Torr\Assets\File\Data\FileProcessData;
 use Torr\Assets\File\Type\Css\CssUrlRewriter;
 use Torr\Assets\File\Type\Header\FileInfoCommentGenerator;
 use Torr\HtmlBuilder\Node\HtmlElement;
 
-final class CssFileType extends FileType
+final class CssFileType extends FileType implements ServiceSubscriberInterface
 {
 	private FileInfoCommentGenerator $infoComment;
-	private CssUrlRewriter $urlRewriter;
+	private ContainerInterface $locator;
 
 
 	/**
 	 * @inheritDoc
 	 */
-	public function __construct (CssUrlRewriter $urlRewriter)
+	public function __construct (ContainerInterface $locator)
 	{
 		$this->infoComment = new FileInfoCommentGenerator("/*", "*/");
-		$this->urlRewriter = $urlRewriter;
+		$this->locator = $locator;
 	}
 
 
@@ -37,9 +39,11 @@ final class CssFileType extends FileType
 	 */
 	public function processForDebug (FileProcessData $data) : string
 	{
+		$urlRewriter = $this->locator->get(CssUrlRewriter::class);
+
 		return $this->infoComment->generateInfoComment($data->getAsset(), $data->getFilePath()) .
 			"\n" .
-			$this->urlRewriter->rewrite($data->getContent());
+			$urlRewriter->rewrite($data->getContent());
 	}
 
 
@@ -48,7 +52,9 @@ final class CssFileType extends FileType
 	 */
 	public function processForProduction (FileProcessData $data) : string
 	{
-		return $this->urlRewriter->rewrite($data->getContent());
+		$urlRewriter = $this->locator->get(CssUrlRewriter::class);
+
+		return $urlRewriter->rewrite($data->getContent());
 	}
 
 
@@ -77,5 +83,15 @@ final class CssFileType extends FileType
 	public function isEmbeddable () : bool
 	{
 		return true;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public static function getSubscribedServices ()
+	{
+		return [
+			CssUrlRewriter::class,
+		];
 	}
 }

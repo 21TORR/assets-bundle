@@ -2,40 +2,42 @@
 
 namespace Torr\Assets\Storage;
 
+use Psr\Container\ContainerInterface;
 use Symfony\Component\Finder\Exception\DirectoryNotFoundException;
 use Symfony\Component\Finder\Finder;
+use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Torr\Assets\Asset\Asset;
 use Torr\Assets\File\FileLoader;
 use Torr\Assets\File\FileTypeRegistry;
 use Torr\Assets\Manager\AssetsManager;
 use Torr\Assets\Namespaces\NamespaceRegistry;
 
-final class AssetDumper
+final class AssetDumper implements ServiceSubscriberInterface
 {
 	private const SKIP_DEFERRED = true;
 	private const ALL_ASSETS = false;
 
+	private ContainerInterface $locator;
 	private AssetStorage $storage;
 	private NamespaceRegistry $namespaceRegistry;
 	private FileLoader $fileLoader;
 	private FileTypeRegistry $fileTypeRegistry;
-	private AssetsManager $assetsManager;
 
 	/**
 	 */
 	public function __construct (
+		ContainerInterface $locator,
 		AssetStorage $storage,
 		NamespaceRegistry $namespaceRegistry,
 		FileLoader $fileLoader,
-		FileTypeRegistry $fileTypeRegistry,
-		AssetsManager $assetsManager
+		FileTypeRegistry $fileTypeRegistry
 	)
 	{
+		$this->locator = $locator;
 		$this->storage = $storage;
 		$this->namespaceRegistry = $namespaceRegistry;
 		$this->fileLoader = $fileLoader;
 		$this->fileTypeRegistry = $fileTypeRegistry;
-		$this->assetsManager = $assetsManager;
 	}
 
 
@@ -53,6 +55,8 @@ final class AssetDumper
 	 */
 	public function dumpNamespaces (array $namespaces) : AssetMap
 	{
+		$assetsManager = $this->locator->get(AssetsManager::class);
+
 		$assets = $this->findAssets($namespaces);
 		$map = new AssetMap();
 
@@ -60,13 +64,13 @@ final class AssetDumper
 		$deferred = $this->dumpAssets($map, $assets, self::SKIP_DEFERRED);
 
 		// save first draft in cache
-		$this->assetsManager->setAssetMap($map);
+		$assetsManager->setAssetMap($map);
 
 		// then dump second pass (only the deferred ones)
 		$this->dumpAssets($map, $deferred, self::ALL_ASSETS);
 
 		// save final map in cache
-		$this->assetsManager->setAssetMap($map);
+		$assetsManager->setAssetMap($map);
 
 		return $map;
 	}
@@ -141,4 +145,16 @@ final class AssetDumper
 
 		return $skipped;
 	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public static function getSubscribedServices ()
+	{
+		return [
+			AssetsManager::class,
+		];
+	}
+
+
 }
