@@ -7,6 +7,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Torr\Assets\Asset\Asset;
 use Torr\Assets\Asset\StoredAsset;
 use Torr\Assets\Dependency\DependencyHelper;
+use Torr\Assets\File\FileLoader;
 use Torr\Assets\File\FileTypeRegistry;
 use Torr\Assets\Manager\AssetsManager;
 use Torr\Assets\Routing\AssetsRouteLoader;
@@ -33,6 +34,8 @@ final class AssetsHelper
 
 	private UrlGeneratorInterface $router;
 
+	private FileLoader $fileLoader;
+
 	/**
 	 */
 	public function __construct (
@@ -41,6 +44,7 @@ final class AssetsHelper
 		KernelInterface $kernelInterface,
 		AssetStorage $assetStorage,
 		UrlGeneratorInterface $router,
+		FileLoader $fileLoader,
 	)
 	{
 		$this->fileTypeRegistry = $fileTypeRegistry;
@@ -48,6 +52,7 @@ final class AssetsHelper
 		$this->kernel = $kernelInterface;
 		$this->assetStorage = $assetStorage;
 		$this->router = $router;
+		$this->fileLoader = $fileLoader;
 	}
 
 	/**
@@ -77,9 +82,21 @@ final class AssetsHelper
 			else
 			{
 				$storedAsset = $this->assetsManager->getAssetMap()->get($value);
-				$fileType = $this->fileTypeRegistry->getFileType($storedAsset->getAsset());
-				$path = $this->buildUrl($storedAsset);
-				$returnValue .= $fileType->getEmbedCode($path);
+
+				if (null !== $storedAsset)
+				{
+					$fileType = $this->fileTypeRegistry->getFileType($storedAsset->getAsset());
+
+					if ($asset->getExtension() === "svg")
+					{
+						$returnValue .= $this->fileLoader->loadFile($this->assetsManager->getAssetMap(), $asset, $this->kernel->isDebug());
+					}
+					else
+					{
+						$path = $this->buildUrl($storedAsset);
+						$returnValue .= $fileType->getEmbedCode($path);
+					}
+				}
 			}
 		}
 
@@ -93,7 +110,7 @@ final class AssetsHelper
 	public function getUrl (string $value) : string
 	{
 		$storedAsset = $this->assetsManager->getAssetMap()->get($value);
-		return $this->buildUrl($storedAsset);
+		return $storedAsset ? $this->buildUrl($storedAsset) : "";
 	}
 
 	/**
