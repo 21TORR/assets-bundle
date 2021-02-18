@@ -60,7 +60,7 @@ final class JavaScriptFileType extends FileType
 		{
 			$element->getAttributes()->set("type", "module");
 		}
-		else if (isset($parameter['legacy']))
+		elseif (isset($parameter['legacy']))
 		{
 			$element->getAttributes()->set("nomodule", true);
 		}

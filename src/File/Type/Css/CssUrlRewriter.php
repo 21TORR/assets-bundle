@@ -1,15 +1,12 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Torr\Assets\File\Type\Css;
 
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use function Symfony\Component\String\s;
 use Torr\Assets\Asset\Asset;
 use Torr\Assets\Exception\Asset\InvalidAssetException;
 use Torr\Assets\Helper\AssetsHelper;
 use Torr\Assets\Manager\AssetsManager;
-use Torr\Assets\Routing\AssetsRouteLoader;
-use Torr\Assets\Storage\AssetStorage;
-use function Symfony\Component\String\s;
 
 class CssUrlRewriter
 {
@@ -17,24 +14,15 @@ class CssUrlRewriter
 	private array $assets = [];
 
 	private AssetsManager $assetsManager;
-
 	private AssetsHelper $assetsHelper;
-
-	private AssetStorage $assetStorage;
-
-	private UrlGeneratorInterface $router;
 
 	/**
 	 */
 	public function __construct (
-		AssetStorage $assetStorage,
-		UrlGeneratorInterface $router,
 		AssetsManager $assetsManager,
 		AssetsHelper $assetsHelper
 	)
 	{
-		$this->assetStorage = $assetStorage;
-		$this->router = $router;
 		$this->assetsManager = $assetsManager;
 		$this->assetsHelper = $assetsHelper;
 	}
@@ -53,11 +41,12 @@ class CssUrlRewriter
 	 */
 	private function findAssets (string $content) : void
 	{
-		preg_match_all('~url\\(\\s*(?<path>.*?)\\s*\\)~i', $content, $matches);
+		\preg_match_all('~url\\(\\s*(?<path>.*?)\\s*\\)~i', $content, $matches);
 
 		foreach ($matches['path'] as $item)
 		{
 			$path = s($item)->replace('"', '')->replace("'", "")->toString();
+
 			try
 			{
 				$this->assets[$path] = Asset::create($path);
@@ -80,12 +69,12 @@ class CssUrlRewriter
 			$map = $this->assetsManager->getAssetMap();
 			$asset = $map->get($key);
 
-			if (null == $asset)
+			if (null === $asset)
 			{
 				continue;
 			}
 
-			$fullPath = $this->assetsHelper->buildUrl($asset);
+			$fullPath = $this->assetsHelper->getUrl($asset->toAssetPath());
 			$stringContent = $stringContent->replace($key, $fullPath);
 		}
 

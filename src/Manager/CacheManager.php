@@ -1,8 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Torr\Assets\Manager;
 
 use Psr\Cache\CacheItemPoolInterface;
+use Torr\Assets\Storage\AssetMap;
 
 final class CacheManager
 {
@@ -11,7 +12,7 @@ final class CacheManager
 	public const ASSET_MAP_CACHE_KEY = self::APP_CACHE_KEY . 'asset_map';
 	public const ASSET_DEP_COLLECTION_CACHE_KEY = self::APP_CACHE_KEY . 'asset_dependency_collection';
 
-	protected CacheItemPoolInterface $cachePool;
+	private CacheItemPoolInterface $cachePool;
 
 	/**
 	 * AbstractCache constructor.
@@ -22,7 +23,9 @@ final class CacheManager
 	}
 
 	/**
-	 * save AssetMap in Cache
+	 * Save AssetMap in Cache
+	 *
+	 * @param mixed $data
 	 */
 	public function setCache ($data, string $cacheKey) : void
 	{
@@ -32,12 +35,13 @@ final class CacheManager
 	}
 
 	/**
-	 * get from Cache
+	 * Get AssetMap from Cache
+	 *
+	 * @return mixed
 	 */
 	public function getCache (string $cacheKey)
 	{
 		$cacheItem = $this->cachePool->getItem($cacheKey);
-
 		return $cacheItem->isHit()
 			? $cacheItem->get()
 			: null;

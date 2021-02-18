@@ -7,7 +7,6 @@ use Torr\Assets\Exception\File\NotEmbeddableAssetException;
 use Torr\Assets\File\FileLoader;
 use Torr\Assets\File\FileTypeRegistry;
 use Torr\Assets\Html\AssetHtmlIncluder;
-use Torr\Assets\Html\AssetHtmlLinker;
 use Torr\Assets\Routing\AssetUrlGenerator;
 
 /**
@@ -40,8 +39,6 @@ final class AssetsHelper
 
 	/**
 	 * Returns the embed code for the given asset(s)
-	 *
-	 * @param string $assetPath
 	 */
 	public function embed (string $assetPath) : string
 	{

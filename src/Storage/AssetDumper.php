@@ -114,7 +114,7 @@ final class AssetDumper
 	 * Dumps the list of given assets
 	 *
 	 * @param Asset[] $assets
-	 * @param bool $skipDeferred whether deferred assets should be skipped.
+	 * @param bool    $skipDeferred whether deferred assets should be skipped.
 	 *
 	 * @return Asset[] all skipped assets
 	 */

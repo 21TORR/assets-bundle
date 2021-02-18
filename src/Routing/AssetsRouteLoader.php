@@ -26,7 +26,7 @@ final class AssetsRouteLoader extends Loader
 	/**
 	 * @inheritDoc
 	 */
-	public function load ($resource, string $type = null) : RouteCollection
+	public function load ($resource, ?string $type = null) : RouteCollection
 	{
 		$collection = new RouteCollection();
 		$output = $this->assetStorage->getOutputDir();
@@ -49,7 +49,7 @@ final class AssetsRouteLoader extends Loader
 	/**
 	 * @inheritDoc
 	 */
-	public function supports ($resource, string $type = null)
+	public function supports ($resource, ?string $type = null)
 	{
 		return "assets-routes" === $type;
 	}

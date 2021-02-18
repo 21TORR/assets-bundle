@@ -1,26 +1,31 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Torr\Assets\Manager;
 
-use Torr\Assets\Storage\AssetDependencyCollection;
-use Torr\Assets\Dependency\DependencyRegistration;
 use Torr\Assets\Namespaces\NamespaceRegistry;
+use Torr\Assets\Storage\AssetDependencyCollection;
 use Torr\Assets\Storage\AssetDumper;
 use Torr\Assets\Storage\AssetMap;
 
 final class AssetsManager
 {
-	/** @required */
-	public NamespaceRegistry $namespaceRegistry;
+	private NamespaceRegistry $namespaceRegistry;
+	private AssetDumper $assetDumper;
+	private CacheManager $cacheManager;
 
-	/** @required */
-	public AssetDumper $assetDumper;
+	/**
+	 */
+	public function __construct (
+		NamespaceRegistry $namespaceRegistry,
+		AssetDumper $assetDumper,
+		CacheManager $cacheManager,
+	)
+	{
+		$this->namespaceRegistry = $namespaceRegistry;
+		$this->assetDumper = $assetDumper;
+		$this->cacheManager = $cacheManager;
+	}
 
-	/** @required */
-	public CacheManager $cacheManager;
-
-	/** @required */
-	public DependencyRegistration $dependencyRegistration;
 
 	/**
 	 */
@@ -40,18 +45,10 @@ final class AssetsManager
 
 	/**
 	 */
-	public function registerDependency () : void
-	{
-		$this->dependencyRegistration->register();
-	}
-
-	/**
-	 */
 	public function dump () : void
 	{
 		$this->clearAll();
 		$this->dumpAssets();
-		$this->registerDependency();
 	}
 
 	/**

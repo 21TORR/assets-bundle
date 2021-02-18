@@ -40,7 +40,8 @@ final class AssetsDumpCommand extends Command
 		$io->newLine();
 
 		$io->section("Register dependency");
-		$this->assetsManager->registerDependency();
+		// @todo refactor this
+		//$this->assetsManager->registerDependency();
 		$io->writeln("<fg=green>Done</>");
 		$io->newLine(2);
 

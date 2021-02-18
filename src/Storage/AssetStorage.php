@@ -12,9 +12,9 @@ final class AssetStorage
 
 	private Filesystem $filesystem;
 	private string $storageDir;
-    private string $outputDir;
+	private string $outputDir;
 
-    /**
+	/**
 	 */
 	public function __construct (
 		Filesystem $filesystem,
@@ -23,9 +23,9 @@ final class AssetStorage
 	)
 	{
 		$this->filesystem = $filesystem;
-        $this->outputDir = \trim($outputDir, "/");
+		$this->outputDir = \trim($outputDir, "/");
 		$this->storageDir = "{$publicDir}/{$this->outputDir}";
-    }
+	}
 
 
 	/**
@@ -33,8 +33,7 @@ final class AssetStorage
 	 */
 	public function getOutputDir () : string
 	{
-		return $this->outputDir
-            ;
+		return $this->outputDir;
 	}
 
 

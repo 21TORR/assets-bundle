@@ -2,7 +2,6 @@
 
 namespace Torr\Assets\Routing;
 
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Torr\Assets\Asset\Asset;
@@ -40,7 +39,7 @@ final class AssetUrlGenerator
 	{
 		$storedAsset = $this->assetsManager->getAssetMap()->get($asset->toAssetPath());
 
-		if ($storedAsset instanceof StoredAsset)
+		if ($storedAsset instanceof StoredAsset && !$this->kernel->isDebug())
 		{
 			$path = "/{$this->assetStorage->getOutputDir()}/{$storedAsset->getStoredFilePath()}";
 		}

@@ -77,7 +77,7 @@ final class FileLoader
 		return [$filePath, $content];
 	}
 
-	public function loadFile ()
+	public function loadFile () : void
 	{
 
 	}

@@ -10,17 +10,16 @@ use Torr\HtmlBuilder\Node\HtmlElement;
 final class CssFileType extends FileType
 {
 	private FileInfoCommentGenerator $infoComment;
-
-	/** @required */
-	public CssUrlRewriter $urlRewriter;
+	private CssUrlRewriter $urlRewriter;
 
 
 	/**
 	 * @inheritDoc
 	 */
-	public function __construct ()
+	public function __construct (CssUrlRewriter $urlRewriter)
 	{
 		$this->infoComment = new FileInfoCommentGenerator("/*", "*/");
+		$this->urlRewriter = $urlRewriter;
 	}
 
 

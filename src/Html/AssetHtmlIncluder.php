@@ -30,7 +30,6 @@ final class AssetHtmlIncluder
 	 * Generates links to all files
 	 *
 	 * @param string[] $assetPaths
-	 * @return string
 	 */
 	public function generateHtmlIncludeCodeForAssets (array $assetPaths) : string
 	{
