@@ -54,6 +54,7 @@ final class JavaScriptFileType extends FileType
 	{
 		$element = new HtmlElement("script", [
 			"src" => $path,
+			"defer" => true,
 		]);
 
 		if (isset($parameter['modern']))
