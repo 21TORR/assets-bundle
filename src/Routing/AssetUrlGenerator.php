@@ -7,28 +7,24 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Torr\Assets\Asset\Asset;
 use Torr\Assets\Asset\StoredAsset;
 use Torr\Assets\Manager\AssetsManager;
-use Torr\Assets\Storage\AssetStorage;
 
 final class AssetUrlGenerator
 {
 	private AssetsManager $assetsManager;
 	private KernelInterface $kernel;
 	private UrlGeneratorInterface $router;
-	private AssetStorage $assetStorage;
 
 	/**
 	 */
 	public function __construct (
 		AssetsManager $assetsManager,
 		KernelInterface $kernel,
-		UrlGeneratorInterface $router,
-		AssetStorage $assetStorage
+		UrlGeneratorInterface $router
 	)
 	{
 		$this->assetsManager = $assetsManager;
 		$this->kernel = $kernel;
 		$this->router = $router;
-		$this->assetStorage = $assetStorage;
 	}
 
 
@@ -41,19 +37,20 @@ final class AssetUrlGenerator
 
 		if ($storedAsset instanceof StoredAsset && !$this->kernel->isDebug())
 		{
-			$path = "/{$this->assetStorage->getOutputDir()}/{$storedAsset->getStoredFilePath()}";
+			[$namespace, $path] = explode("/", \ltrim($storedAsset->getStoredFilePath(), "/"), 2);
 		}
 		else
 		{
-			$path = $this->router->generate(
-				AssetsRouteLoader::ROUTE_NAME,
-				[
-					'namespace' => $asset->getNamespace(),
-					'path' => $asset->getPath(),
-				]
-			);
+			$namespace = $asset->getNamespace();
+			$path = $asset->getPath();
 		}
 
-		return $path;
+		return $this->router->generate(
+			AssetsRouteLoader::ROUTE_NAME,
+			[
+				'namespace' => $namespace,
+				'path' => $path,
+			]
+		);
 	}
 }
