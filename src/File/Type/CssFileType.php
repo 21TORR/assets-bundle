@@ -85,7 +85,16 @@ final class CssFileType extends FileType implements ServiceSubscriberInterface
 		return true;
 	}
 
-	/**
+    /**
+     * @inheritDoc
+     */
+    public function shouldBeStreamed() : bool
+    {
+        return false;
+    }
+
+
+    /**
 	 * @inheritDoc
 	 */
 	public static function getSubscribedServices ()

@@ -46,6 +46,14 @@ final class JavaScriptFileType extends FileType
 		return false;
 	}
 
+    /**
+     * @inheritDoc
+     */
+    public function shouldBeStreamed() : bool
+    {
+        return false;
+    }
+
 
 	/**
 	 * @inheritDoc

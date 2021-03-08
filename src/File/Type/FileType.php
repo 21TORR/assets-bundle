@@ -71,4 +71,14 @@ abstract class FileType
 	{
 		return false;
 	}
+
+	/**
+     * Returns whether the file should be streamed
+     *
+     * @todo remove and replace with ProcessableFileType instead.
+	 */
+	public function shouldBeStreamed () : bool
+	{
+		return true;
+	}
 }
