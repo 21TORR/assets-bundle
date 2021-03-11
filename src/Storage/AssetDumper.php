@@ -165,7 +165,7 @@ final class AssetDumper
 
 		if (null !== $progress)
 		{
-			\assert($io !== null);
+			\assert(null !== $io);
 			$progress->clear();
 			$io->newLine();
 		}
