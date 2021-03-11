@@ -47,13 +47,13 @@ final class SvgFileType extends FileType
 		return true;
 	}
 
-    /**
-     * @inheritDoc
-     */
-    public function shouldBeStreamed() : bool
-    {
-        return false;
-    }
+	/**
+	 * @inheritDoc
+	 */
+	public function shouldBeStreamed() : bool
+	{
+		return false;
+	}
 
 	/**
 	 * @inheritDoc
