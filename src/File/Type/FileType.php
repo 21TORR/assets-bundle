@@ -59,7 +59,7 @@ abstract class FileType
 
 	/**
 	 */
-	public function createHtmlIncludeElement (string $path, array $parameter = []) : HtmlElement
+	public function createHtmlIncludeElement (string $url, array $attributes = []) : HtmlElement
 	{
 		throw new NoEmbedSupport();
 	}

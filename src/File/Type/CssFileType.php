@@ -7,6 +7,7 @@ use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Torr\Assets\File\Data\FileProcessData;
 use Torr\Assets\File\Type\Css\CssUrlRewriter;
 use Torr\Assets\File\Type\Header\FileInfoCommentGenerator;
+use Torr\HtmlBuilder\Node\HtmlAttributes;
 use Torr\HtmlBuilder\Node\HtmlElement;
 
 final class CssFileType extends FileType implements ServiceSubscriberInterface
@@ -69,12 +70,13 @@ final class CssFileType extends FileType implements ServiceSubscriberInterface
 	/**
 	 * @inheritDoc
 	 */
-	public function createHtmlIncludeElement (string $path, array $parameter = []) : HtmlElement
+	public function createHtmlIncludeElement (string $url, array $attributes = []) : HtmlElement
 	{
-		return new HtmlElement("link", [
-			"rel" => "stylesheet",
-			"href" => $path,
-		]);
+		$attrs = new HtmlAttributes($attributes);
+		$attrs->set("rel", "stylesheet");
+		$attrs->set("href", $url);
+
+		return new HtmlElement("link", $attrs);
 	}
 
 	/**
