@@ -175,4 +175,13 @@ final class DependencyMapLoader implements CacheClearerInterface
 	{
 		return $this->cache->delete(self::CACHE_KEY);
 	}
+
+	/**
+	 * Refreshes the dependencies map
+	 */
+	public function refresh () : void
+	{
+		$this->clear("");
+		$this->load();
+	}
 }

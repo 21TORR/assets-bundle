@@ -2,54 +2,53 @@
 
 namespace Torr\Assets\Routing;
 
-use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Torr\Assets\Asset\Asset;
-use Torr\Assets\Asset\StoredAsset;
 use Torr\Assets\Manager\AssetsManager;
+use Torr\Assets\Storage\AssetStorageMap;
 
 final class AssetUrlGenerator
 {
 	private AssetsManager $assetsManager;
-	private KernelInterface $kernel;
 	private UrlGeneratorInterface $router;
+	private bool $isDebug;
 
 	/**
 	 */
 	public function __construct (
 		AssetsManager $assetsManager,
-		KernelInterface $kernel,
-		UrlGeneratorInterface $router
+		UrlGeneratorInterface $router,
+		bool $isDebug
 	)
 	{
 		$this->assetsManager = $assetsManager;
-		$this->kernel = $kernel;
 		$this->router = $router;
+		$this->isDebug = $isDebug;
 	}
 
 
 	/**
 	 * Returns the url to the given asset
 	 */
-	public function getUrl (Asset $asset) : string
+	public function getUrl (Asset $asset, ?AssetStorageMap $storageMap = null) : string
 	{
-		$storedAsset = $this->assetsManager->getAssetMap()->get($asset->toAssetPath());
-
-		if ($storedAsset instanceof StoredAsset && !$this->kernel->isDebug())
+		if (null === $storageMap)
 		{
-			[$namespace, $path] = \explode("/", \ltrim($storedAsset->getStoredFilePath(), "/"), 2);
+			$storageMap = $this->assetsManager->getStorageMap();
 		}
-		else
+
+		$toEmbed = $asset;
+
+		if (!$this->isDebug)
 		{
-			$namespace = $asset->getNamespace();
-			$path = $asset->getPath();
+			$toEmbed = $storageMap->get($asset);
 		}
 
 		return $this->router->generate(
 			AssetsRouteLoader::ROUTE_NAME,
 			[
-				'namespace' => $namespace,
-				'path' => $path,
+				'namespace' => $toEmbed->getNamespace(),
+				'path' => $toEmbed->getPath(),
 			]
 		);
 	}

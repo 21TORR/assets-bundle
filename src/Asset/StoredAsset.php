@@ -2,7 +2,7 @@
 
 namespace Torr\Assets\Asset;
 
-final class StoredAsset
+final class StoredAsset implements AssetInterface
 {
 	private Asset $asset;
 	/**
@@ -27,6 +27,7 @@ final class StoredAsset
 		$this->storedFilePath = $storedFilePath;
 	}
 
+
 	/**
 	 */
 	public function toAssetPath () : string
@@ -34,12 +35,22 @@ final class StoredAsset
 		return $this->asset->toAssetPath();
 	}
 
+
 	/**
 	 */
-	public function getStoredFilePath () : string
+	public function getPath() : string
 	{
 		return $this->storedFilePath;
 	}
+
+
+	/**
+	 */
+	public function getNamespace() : string
+	{
+		return $this->asset->getNamespace();
+	}
+
 
 	/**
 	 */

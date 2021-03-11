@@ -6,7 +6,7 @@ use Torr\Assets\Asset\Asset;
 use Torr\Assets\Exception\File\FileNotFoundException;
 use Torr\Assets\File\Data\FileProcessData;
 use Torr\Assets\Namespaces\NamespaceRegistry;
-use Torr\Assets\Storage\AssetMap;
+use Torr\Assets\Storage\AssetStorageMap;
 
 final class FileLoader
 {
@@ -24,7 +24,7 @@ final class FileLoader
 	/**
 	 * Loads the file for production usage
 	 */
-	public function loadForProduction (AssetMap $assetMap, Asset $asset) : string
+	public function loadForProduction (AssetStorageMap $assetMap, Asset $asset) : string
 	{
 		[$filePath, $content] = $this->fetchFileContents($asset);
 		$processData = new FileProcessData($asset, $content, $filePath, $assetMap);
@@ -37,7 +37,7 @@ final class FileLoader
 	/**
 	 * Loads the file for debug usage
 	 */
-	public function loadForDebug (AssetMap $assetMap, Asset $asset) : string
+	public function loadForDebug (AssetStorageMap $assetMap, Asset $asset) : string
 	{
 		[$filePath, $content] = $this->fetchFileContents($asset);
 		$processData = new FileProcessData($asset, $content, $filePath, $assetMap);

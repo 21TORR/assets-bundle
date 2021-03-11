@@ -2,22 +2,19 @@
 
 namespace Torr\Assets\Storage;
 
-use Psr\Container\ContainerInterface;
 use Symfony\Component\Finder\Exception\DirectoryNotFoundException;
 use Symfony\Component\Finder\Finder;
-use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Torr\Assets\Asset\Asset;
 use Torr\Assets\File\FileLoader;
 use Torr\Assets\File\FileTypeRegistry;
-use Torr\Assets\Manager\AssetsManager;
 use Torr\Assets\Namespaces\NamespaceRegistry;
+use Torr\Rad\Command\TorrCliStyle;
 
-final class AssetDumper implements ServiceSubscriberInterface
+final class AssetDumper
 {
 	private const SKIP_DEFERRED = true;
 	private const ALL_ASSETS = false;
 
-	private ContainerInterface $locator;
 	private AssetStorage $storage;
 	private NamespaceRegistry $namespaceRegistry;
 	private FileLoader $fileLoader;
@@ -26,14 +23,12 @@ final class AssetDumper implements ServiceSubscriberInterface
 	/**
 	 */
 	public function __construct (
-		ContainerInterface $locator,
 		AssetStorage $storage,
 		NamespaceRegistry $namespaceRegistry,
 		FileLoader $fileLoader,
 		FileTypeRegistry $fileTypeRegistry
 	)
 	{
-		$this->locator = $locator;
 		$this->storage = $storage;
 		$this->namespaceRegistry = $namespaceRegistry;
 		$this->fileLoader = $fileLoader;
@@ -53,24 +48,31 @@ final class AssetDumper implements ServiceSubscriberInterface
 	/**
 	 * Dumps all namespaces
 	 */
-	public function dumpNamespaces (array $namespaces) : AssetMap
+	public function dumpNamespaces (array $namespaces, ?TorrCliStyle $io = null) : AssetStorageMap
 	{
-		$assetsManager = $this->locator->get(AssetsManager::class);
+		if (null !== $io)
+		{
+			$io->writeln("• Finding all assets");
+		}
 
 		$assets = $this->findAssets($namespaces);
-		$map = new AssetMap();
+		$map = new AssetStorageMap();
 
 		// dump first pass (= everything without dependencies)
-		$deferred = $this->dumpAssets($map, $assets, self::SKIP_DEFERRED);
+		if (null !== $io)
+		{
+			$io->writeln("• Dumping non-deferred assets");
+		}
 
-		// save first draft in cache
-		$assetsManager->setAssetMap($map);
+		$deferred = $this->dumpAssets($io, $map, $assets, self::SKIP_DEFERRED);
 
 		// then dump second pass (only the deferred ones)
-		$this->dumpAssets($map, $deferred, self::ALL_ASSETS);
+		if (null !== $io)
+		{
+			$io->writeln("• Dumping deferred assets");
+		}
 
-		// save final map in cache
-		$assetsManager->setAssetMap($map);
+		$this->dumpAssets($io, $map, $deferred, self::ALL_ASSETS);
 
 		return $map;
 	}
@@ -122,12 +124,30 @@ final class AssetDumper implements ServiceSubscriberInterface
 	 *
 	 * @return Asset[] all skipped assets
 	 */
-	private function dumpAssets (AssetMap $assetMap, array $assets, bool $skipDeferred) : array
+	private function dumpAssets (
+		?TorrCliStyle $io,
+		AssetStorageMap $assetMap,
+		array $assets,
+		bool $skipDeferred
+	) : array
 	{
 		$skipped = [];
+		$progress = null;
+
+		if (null !== $io)
+		{
+			$progress = $io->createProgressBar(\count($assets));
+			$progress->setFormat(" %current%/%max% [%bar%] %percent:3s%% %elapsed:6s% %message%");
+		}
 
 		foreach ($assets as $asset)
 		{
+			if (null !== $progress)
+			{
+				$progress->setMessage($asset->toAssetPath());
+				$progress->advance();
+			}
+
 			$fileType = $this->fileTypeRegistry->getFileType($asset);
 
 			// if we should skip the deferred assets, just collect them and skip
@@ -143,18 +163,13 @@ final class AssetDumper implements ServiceSubscriberInterface
 			$assetMap->add($storedAsset);
 		}
 
+		if (null !== $progress)
+		{
+			\assert($io !== null);
+			$progress->clear();
+			$io->newLine();
+		}
+
 		return $skipped;
 	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public static function getSubscribedServices ()
-	{
-		return [
-			AssetsManager::class,
-		];
-	}
-
-
 }

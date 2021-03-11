@@ -40,13 +40,11 @@ final class AssetHtmlIncluder
 	{
 		$html = [];
 		$map = $this->dependencyMapLoader->load();
-		dump($map);
 
 		foreach ($assetPaths as $assetPath)
 		{
 			$asset = Asset::create($assetPath);
 			$dependencies = $map->getDependencies($asset);
-			dump($asset, $dependencies);
 
 			foreach ($dependencies as $dependency)
 			{

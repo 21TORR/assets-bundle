@@ -12,7 +12,7 @@ use Torr\Assets\Exception\File\FileNotFoundException;
 use Torr\Assets\File\FileLoader;
 use Torr\Assets\File\FileTypeRegistry;
 use Torr\Assets\Namespaces\NamespaceRegistry;
-use Torr\Assets\Storage\AssetMap;
+use Torr\Assets\Storage\AssetStorageMap;
 use Torr\Rad\Controller\BaseController;
 
 final class EmbedController extends BaseController
@@ -30,7 +30,7 @@ final class EmbedController extends BaseController
 		try
 		{
 			$asset = new Asset($namespace, $path);
-			$assetMap = new AssetMap();
+			$assetMap = new AssetStorageMap();
 			$fileType = $fileTypeRegistry->getFileType($asset);
 
 			if ($fileType->shouldBeStreamed())

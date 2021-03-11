@@ -3,18 +3,18 @@
 namespace Torr\Assets\File\Data;
 
 use Torr\Assets\Asset\Asset;
-use Torr\Assets\Storage\AssetMap;
+use Torr\Assets\Storage\AssetStorageMap;
 
 final class FileProcessData
 {
 	private Asset $asset;
 	private string $content;
 	private string $filePath;
-	private AssetMap $assetMap;
+	private AssetStorageMap $assetMap;
 
 	/**
 	 */
-	public function __construct (Asset $asset, string $content, string $filePath, AssetMap $assetMap)
+	public function __construct (Asset $asset, string $content, string $filePath, AssetStorageMap $assetMap)
 	{
 		$this->asset = $asset;
 		$this->content = $content;
@@ -45,7 +45,7 @@ final class FileProcessData
 
 	/**
 	 */
-	public function getAssetMap () : AssetMap
+	public function getStorageMap () : AssetStorageMap
 	{
 		return $this->assetMap;
 	}

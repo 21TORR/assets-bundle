@@ -60,8 +60,8 @@ final class AssetStorage
 			$fileName = $this->createFileNameWithHash($fileName, $hash);
 		}
 
-		$storagePath = "{$asset->getNamespace()}/{$fileDir}{$fileName}";
-		$targetPath = "{$this->storageDir}/{$storagePath}";
+		$storagePath = $fileDir . $fileName;
+		$targetPath = "{$this->storageDir}/{$asset->getNamespace()}/{$storagePath}";
 		$this->filesystem->dumpFile($targetPath, $content);
 
 		return new StoredAsset(
@@ -84,6 +84,7 @@ final class AssetStorage
 		$fileNameHash = \rtrim($hash, "=");
 		$fileNameHash = \strtr($fileNameHash, [
 			"/" => "_",
+			"+" => "-",
 		]);
 		$fileNameHash = \substr($fileNameHash, 0, 20);
 

@@ -53,9 +53,10 @@ final class CssFileType extends FileType implements ServiceSubscriberInterface
 	 */
 	public function processForProduction (FileProcessData $data) : string
 	{
+		/** @var CssUrlRewriter $urlRewriter */
 		$urlRewriter = $this->locator->get(CssUrlRewriter::class);
 
-		return $urlRewriter->rewrite($data->getContent());
+		return $urlRewriter->rewrite($data->getStorageMap(), $data->getContent());
 	}
 
 
