@@ -37,7 +37,7 @@ final class AssetUrlGenerator
 
 		if ($storedAsset instanceof StoredAsset && !$this->kernel->isDebug())
 		{
-			[$namespace, $path] = explode("/", \ltrim($storedAsset->getStoredFilePath(), "/"), 2);
+			[$namespace, $path] = \explode("/", \ltrim($storedAsset->getStoredFilePath(), "/"), 2);
 		}
 		else
 		{

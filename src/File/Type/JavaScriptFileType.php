@@ -4,6 +4,7 @@ namespace Torr\Assets\File\Type;
 
 use Torr\Assets\File\Data\FileProcessData;
 use Torr\Assets\File\Type\Header\FileInfoCommentGenerator;
+use Torr\HtmlBuilder\Node\HtmlAttributes;
 use Torr\HtmlBuilder\Node\HtmlElement;
 
 final class JavaScriptFileType extends FileType
@@ -46,35 +47,25 @@ final class JavaScriptFileType extends FileType
 		return false;
 	}
 
-    /**
-     * @inheritDoc
-     */
-    public function shouldBeStreamed() : bool
-    {
-        return false;
-    }
+	/**
+	 * @inheritDoc
+	 */
+	public function shouldBeStreamed() : bool
+	{
+		return false;
+	}
 
 
 	/**
 	 * @inheritDoc
 	 */
-	public function createHtmlIncludeElement (string $path, array $parameter = []) : HtmlElement
+	public function createHtmlIncludeElement (string $url, array $attributes = []) : HtmlElement
 	{
-		$element = new HtmlElement("script", [
-			"src" => $path,
-			"defer" => true,
-		]);
+		$attrs = new HtmlAttributes($attributes);
+		$attrs->set("defer", true);
+		$attrs->set("src", $url);
 
-		if (isset($parameter['modern']))
-		{
-			$element->getAttributes()->set("type", "module");
-		}
-		elseif (isset($parameter['legacy']))
-		{
-			$element->getAttributes()->set("nomodule", true);
-		}
-
-		return $element;
+		return new HtmlElement("script", $attrs);
 	}
 
 

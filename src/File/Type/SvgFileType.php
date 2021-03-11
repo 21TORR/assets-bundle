@@ -4,6 +4,7 @@ namespace Torr\Assets\File\Type;
 
 use Torr\Assets\File\Data\FileProcessData;
 use Torr\Assets\File\Type\Header\FileInfoCommentGenerator;
+use Torr\HtmlBuilder\Node\HtmlAttributes;
 use Torr\HtmlBuilder\Node\HtmlElement;
 
 final class SvgFileType extends FileType
@@ -46,22 +47,23 @@ final class SvgFileType extends FileType
 		return true;
 	}
 
-    /**
-     * @inheritDoc
-     */
-    public function shouldBeStreamed() : bool
-    {
-        return false;
-    }
+	/**
+	 * @inheritDoc
+	 */
+	public function shouldBeStreamed() : bool
+	{
+		return false;
+	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function createHtmlIncludeElement (string $path, array $parameter = []) : HtmlElement
+	public function createHtmlIncludeElement (string $url, array $attributes = []) : HtmlElement
 	{
-		return new HtmlElement("img", [
-			"src" => $path,
-			"alt" => "",
-		]);
+		$attrs = new HtmlAttributes($attributes);
+		$attrs->set("alt", "");
+		$attrs->set("src", $url);
+
+		return new HtmlElement("img", $attrs);
 	}
 }

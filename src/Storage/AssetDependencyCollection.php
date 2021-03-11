@@ -3,7 +3,7 @@
 namespace Torr\Assets\Storage;
 
 use Torr\Assets\Asset\Asset;
-use Torr\Assets\Asset\AssetDependency;
+use Torr\Assets\Asset\Dependency\AssetDependency;
 use Torr\Assets\Exception\Asset\InvalidAssetException;
 
 final class AssetDependencyCollection
