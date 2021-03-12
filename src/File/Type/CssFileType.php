@@ -4,6 +4,8 @@ namespace Torr\Assets\File\Type;
 
 use Psr\Container\ContainerInterface;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
+use Torr\Assets\Asset\AssetInterface;
+use Torr\Assets\Asset\StoredAsset;
 use Torr\Assets\File\Data\FileProcessData;
 use Torr\Assets\File\Type\Css\CssUrlRewriter;
 use Torr\Assets\File\Type\Header\FileInfoCommentGenerator;
@@ -72,11 +74,16 @@ final class CssFileType extends FileType implements ProcessableFileTypeInterface
 	/**
 	 * @inheritDoc
 	 */
-	public function createHtmlIncludeElement (string $url, array $attributes = []) : HtmlElement
+	public function createHtmlIncludeElement (string $url, AssetInterface $asset, array $attributes = []) : HtmlElement
 	{
 		$attrs = new HtmlAttributes($attributes);
 		$attrs->set("rel", "stylesheet");
 		$attrs->set("href", $url);
+
+		if ($asset instanceof StoredAsset)
+		{
+			$attrs->set("integrity", "{$asset->getHashAlgorithm()}-{$asset->getHash()}");
+		}
 
 		return new HtmlElement("link", $attrs);
 	}

@@ -2,6 +2,8 @@
 
 namespace Torr\Assets\File\Type;
 
+use Torr\Assets\Asset\AssetInterface;
+use Torr\Assets\Asset\StoredAsset;
 use Torr\Assets\File\Data\FileProcessData;
 use Torr\Assets\File\Type\Header\FileInfoCommentGenerator;
 use Torr\HtmlBuilder\Node\HtmlAttributes;
@@ -60,11 +62,16 @@ final class JavaScriptFileType extends FileType implements ProcessableFileTypeIn
 	/**
 	 * @inheritDoc
 	 */
-	public function createHtmlIncludeElement (string $url, array $attributes = []) : HtmlElement
+	public function createHtmlIncludeElement (string $url, AssetInterface $asset, array $attributes = []) : HtmlElement
 	{
 		$attrs = new HtmlAttributes($attributes);
 		$attrs->set("defer", true);
 		$attrs->set("src", $url);
+
+		if ($asset instanceof StoredAsset)
+		{
+			$attrs->set("integrity", "{$asset->getHashAlgorithm()}-{$asset->getHash()}");
+		}
 
 		return new HtmlElement("script", $attrs);
 	}

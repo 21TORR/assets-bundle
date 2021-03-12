@@ -58,4 +58,18 @@ final class StoredAsset implements AssetInterface
 	{
 		return $this->asset;
 	}
+
+	/**
+	 */
+	public function getHash() : string
+	{
+		return $this->hash;
+	}
+
+	/**
+	 */
+	public function getHashAlgorithm() : string
+	{
+		return $this->hashAlgorithm;
+	}
 }

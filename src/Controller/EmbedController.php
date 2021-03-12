@@ -14,7 +14,6 @@ use Torr\Assets\File\FileTypeRegistry;
 use Torr\Assets\File\Type\ProcessableFileTypeInterface;
 use Torr\Assets\Manager\AssetsManager;
 use Torr\Assets\Namespaces\NamespaceRegistry;
-use Torr\Assets\Storage\AssetStorageMap;
 use Torr\Rad\Controller\BaseController;
 
 final class EmbedController extends BaseController

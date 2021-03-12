@@ -2,8 +2,8 @@
 
 namespace Torr\Assets\File\Type;
 
+use Torr\Assets\Asset\AssetInterface;
 use Torr\Assets\Exception\File\Type\NoEmbedSupport;
-use Torr\Assets\File\Data\FileProcessData;
 use Torr\HtmlBuilder\Node\HtmlElement;
 
 abstract class FileType
@@ -42,7 +42,7 @@ abstract class FileType
 
 	/**
 	 */
-	public function createHtmlIncludeElement (string $url, array $attributes = []) : HtmlElement
+	public function createHtmlIncludeElement (string $url, AssetInterface $asset, array $attributes = []) : HtmlElement
 	{
 		throw new NoEmbedSupport();
 	}

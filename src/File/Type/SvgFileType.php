@@ -2,6 +2,7 @@
 
 namespace Torr\Assets\File\Type;
 
+use Torr\Assets\Asset\AssetInterface;
 use Torr\Assets\File\Data\FileProcessData;
 use Torr\Assets\File\Type\Header\FileInfoCommentGenerator;
 use Torr\HtmlBuilder\Node\HtmlAttributes;
@@ -50,7 +51,7 @@ final class SvgFileType extends FileType implements ProcessableFileTypeInterface
 	/**
 	 * @inheritDoc
 	 */
-	public function createHtmlIncludeElement (string $url, array $attributes = []) : HtmlElement
+	public function createHtmlIncludeElement (string $url, AssetInterface $asset, array $attributes = []) : HtmlElement
 	{
 		$attrs = new HtmlAttributes($attributes);
 		$attrs->set("alt", "");
