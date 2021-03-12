@@ -170,6 +170,11 @@ final class AssetDumper
 		{
 			\assert(null !== $io);
 			$progress->clear();
+			$io->writeln(\sprintf(
+				"<fg=green>-> Dumped %d %s assets</>",
+				\count($assets),
+				$skipDeferred ? "deferred" : "non-deferred"
+			));
 			$io->newLine();
 		}
 
