@@ -6,6 +6,7 @@ use Torr\Assets\Asset\Asset;
 use Torr\Assets\Asset\Dependency\AssetDependency;
 use Torr\Assets\Dependency\DependencyMapLoader;
 use Torr\Assets\File\FileTypeRegistry;
+use Torr\Assets\Manager\AssetsManager;
 use Torr\Assets\Routing\AssetUrlGenerator;
 use Torr\HtmlBuilder\Builder\HtmlBuilder;
 
@@ -15,19 +16,22 @@ final class AssetHtmlIncluder
 	private AssetUrlGenerator $assetUrlGenerator;
 	private FileTypeRegistry $fileTypeRegistry;
 	private DependencyMapLoader $dependencyMapLoader;
+	private AssetsManager $assetsManager;
 
 	/**
 	 */
 	public function __construct (
 		AssetUrlGenerator $assetUrlGenerator,
 		FileTypeRegistry $fileTypeRegistry,
-		DependencyMapLoader $dependencyMapLoader
+		DependencyMapLoader $dependencyMapLoader,
+		AssetsManager $assetsManager
 	)
 	{
 		$this->htmlBuilder = new HtmlBuilder();
 		$this->assetUrlGenerator = $assetUrlGenerator;
 		$this->fileTypeRegistry = $fileTypeRegistry;
 		$this->dependencyMapLoader = $dependencyMapLoader;
+		$this->assetsManager = $assetsManager;
 	}
 
 
@@ -40,13 +44,11 @@ final class AssetHtmlIncluder
 	{
 		$html = [];
 		$map = $this->dependencyMapLoader->load();
-		dump($map);
 
 		foreach ($assetPaths as $assetPath)
 		{
 			$asset = Asset::create($assetPath);
 			$dependencies = $map->getDependencies($asset);
-			dump($asset, $dependencies);
 
 			foreach ($dependencies as $dependency)
 			{
@@ -67,7 +69,11 @@ final class AssetHtmlIncluder
 		$url = $this->assetUrlGenerator->getUrl($asset);
 
 		$fileType = $this->fileTypeRegistry->getFileType($asset);
-		$includeTag = $fileType->createHtmlIncludeElement($url, $dependency->getAttributes());
+
+		$storageMap = $this->assetsManager->getStorageMap();
+		$storedAsset = $storageMap->get($asset);
+
+		$includeTag = $fileType->createHtmlIncludeElement($url, $storedAsset, $dependency->getAttributes());
 
 		return $this->htmlBuilder->build($includeTag);
 	}

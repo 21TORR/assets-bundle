@@ -2,8 +2,8 @@
 
 namespace Torr\Assets\File\Type;
 
+use Torr\Assets\Asset\AssetInterface;
 use Torr\Assets\Exception\File\Type\NoEmbedSupport;
-use Torr\Assets\File\Data\FileProcessData;
 use Torr\HtmlBuilder\Node\HtmlElement;
 
 abstract class FileType
@@ -15,23 +15,6 @@ abstract class FileType
 	 */
 	abstract public function getSupportedExtensions () : array;
 
-
-	/**
-	 * Processes the file for usage in production
-	 */
-	public function processForProduction (FileProcessData $data) : string
-	{
-		return $data->getContent();
-	}
-
-
-	/**
-	 * Processes the file for usage in debug
-	 */
-	public function processForDebug (FileProcessData $data) : string
-	{
-		return $data->getContent();
-	}
 
 	/**
 	 * Returns whether the file should be compressed
@@ -59,26 +42,8 @@ abstract class FileType
 
 	/**
 	 */
-	public function createHtmlIncludeElement (string $url, array $attributes = []) : HtmlElement
+	public function createHtmlIncludeElement (string $url, AssetInterface $asset, array $attributes = []) : HtmlElement
 	{
 		throw new NoEmbedSupport();
-	}
-
-	/**
-	 * Returns whether the file can directly be embedded in to the page.
-	 */
-	public function isEmbeddable () : bool
-	{
-		return false;
-	}
-
-	/**
-	 * Returns whether the file should be streamed
-	 *
-	 * @todo remove and replace with ProcessableFileType instead.
-	 */
-	public function shouldBeStreamed () : bool
-	{
-		return true;
 	}
 }

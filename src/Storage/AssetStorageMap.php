@@ -2,9 +2,11 @@
 
 namespace Torr\Assets\Storage;
 
+use Torr\Assets\Asset\Asset;
+use Torr\Assets\Asset\AssetInterface;
 use Torr\Assets\Asset\StoredAsset;
 
-final class AssetMap
+final class AssetStorageMap
 {
 	/**
 	 * The map of asset path to stored asset
@@ -23,8 +25,8 @@ final class AssetMap
 
 	/**
 	 */
-	public function get(string $key) : ?StoredAsset
+	public function get (Asset $asset) : AssetInterface
 	{
-		return $this->map[$key] ?? null;
+		return $this->map[$asset->toAssetPath()] ?? $asset;
 	}
 }

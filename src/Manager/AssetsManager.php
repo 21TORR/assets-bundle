@@ -2,28 +2,34 @@
 
 namespace Torr\Assets\Manager;
 
+use Psr\Cache\CacheItemPoolInterface;
 use Torr\Assets\Namespaces\NamespaceRegistry;
-use Torr\Assets\Storage\AssetDependencyCollection;
 use Torr\Assets\Storage\AssetDumper;
-use Torr\Assets\Storage\AssetMap;
+use Torr\Assets\Storage\AssetStorageMap;
+use Torr\Rad\Command\TorrCliStyle;
 
 final class AssetsManager
 {
+	private const STORAGE_MAP_CACHE_KEY = "21torr.assets.storage_map";
 	private NamespaceRegistry $namespaceRegistry;
 	private AssetDumper $assetDumper;
-	private CacheManager $cacheManager;
+	private CacheItemPoolInterface $cachePool;
+	private ?AssetStorageMap $storageMap = null;
+	private bool $isDebug;
 
 	/**
 	 */
 	public function __construct (
 		NamespaceRegistry $namespaceRegistry,
 		AssetDumper $assetDumper,
-		CacheManager $cacheManager
+		CacheItemPoolInterface $cachePool,
+		bool $isDebug
 	)
 	{
 		$this->namespaceRegistry = $namespaceRegistry;
 		$this->assetDumper = $assetDumper;
-		$this->cacheManager = $cacheManager;
+		$this->cachePool = $cachePool;
+		$this->isDebug = $isDebug;
 	}
 
 
@@ -31,79 +37,73 @@ final class AssetsManager
 	 */
 	public function clearAll () : void
 	{
-		$this->cacheManager->clearCache(CacheManager::ASSET_MAP_CACHE_KEY);
-		$this->cacheManager->clearCache(CacheManager::ASSET_DEP_COLLECTION_CACHE_KEY);
+		// clear dump directory
 		$this->assetDumper->clearDumpDirectory();
+
+		// clear cache
+		$this->cachePool->deleteItem(self::STORAGE_MAP_CACHE_KEY);
+		$this->storageMap = null;
 	}
+
 
 	/**
 	 */
-	public function dumpAssets () : void
+	private function dumpAssets (?TorrCliStyle $io = null) : AssetStorageMap
 	{
-		$this->assetDumper->dumpNamespaces($this->namespaceRegistry->getNamespaces());
+		$storageMap = $this->assetDumper->dumpNamespaces(
+			$this->namespaceRegistry->getNamespaces(),
+			$io
+		);
+
+		$cacheItem = $this->cachePool->getItem(self::STORAGE_MAP_CACHE_KEY);
+		$cacheItem->set($this->storageMap);
+		$this->cachePool->saveDeferred($cacheItem);
+
+		return $storageMap;
 	}
+
 
 	/**
 	 */
-	public function dump () : void
+	public function reimport (?TorrCliStyle $io) : void
 	{
+		if (null !== $io)
+		{
+			$io->writeln("• Clearing the storage");
+		}
+
 		$this->clearAll();
-		$this->dumpAssets();
-	}
 
-	/**
-	 */
-	public function setAssetMap (AssetMap $data) : void
-	{
-		$this->cacheManager->setCache($data, CacheManager::ASSET_MAP_CACHE_KEY);
-	}
-
-	/**
-	 * @param AssetDependencyCollection[] $data
-	 */
-	public function setDependencyCollection (array $data) : void
-	{
-		$this->cacheManager->setCache($data, CacheManager::ASSET_DEP_COLLECTION_CACHE_KEY);
-	}
-
-	/**
-	 */
-	public function getAssetMap () : AssetMap
-	{
-		$assetMap = $this->cacheManager->getCache(CacheManager::ASSET_MAP_CACHE_KEY);
-
-		// If no cache exist, execute the DumpCommand
-		if (null === $assetMap)
+		if (null !== $io)
 		{
-			$this->dump();
-			$assetMap = $this->cacheManager->getCache(CacheManager::ASSET_MAP_CACHE_KEY);
+			$io->writeln("• Dumping the assets");
 		}
 
-		return $assetMap;
+		$this->dumpAssets($io);
 	}
 
-	/**
-	 * @return AssetDependencyCollection[]|null
-	 */
-	public function getAllCollections () : ?array
-	{
-		$collection = $this->cacheManager->getCache(CacheManager::ASSET_DEP_COLLECTION_CACHE_KEY);
 
-		// If no cache exist, execute the DumpCommand
-		if (null === $collection)
+	/**
+	 */
+	public function getStorageMap () : AssetStorageMap
+	{
+		if (null === $this->storageMap)
 		{
-			// TODO Add fallback if no collection was found in cache
-			$this->dump();
-			$collection = $this->cacheManager->getCache(CacheManager::ASSET_DEP_COLLECTION_CACHE_KEY);
+			if ($this->isDebug)
+			{
+				$this->storageMap = new AssetStorageMap();
+			}
+			else
+			{
+				$cacheItem = $this->cachePool->getItem(self::STORAGE_MAP_CACHE_KEY);
+				$value = $cacheItem->get();
+
+				$this->storageMap = $value instanceof AssetStorageMap
+					? $value
+					: $this->dumpAssets();
+			}
 		}
 
-		return $collection;
-	}
-
-	/**
-	 */
-	public function getCollectionByPath (string $path) : ?AssetDependencyCollection
-	{
-		return $this->getAllCollections()[$path] ?? null;
+		return $this->storageMap;
 	}
 }

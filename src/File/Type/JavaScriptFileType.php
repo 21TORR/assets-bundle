@@ -2,12 +2,14 @@
 
 namespace Torr\Assets\File\Type;
 
+use Torr\Assets\Asset\AssetInterface;
+use Torr\Assets\Asset\StoredAsset;
 use Torr\Assets\File\Data\FileProcessData;
 use Torr\Assets\File\Type\Header\FileInfoCommentGenerator;
 use Torr\HtmlBuilder\Node\HtmlAttributes;
 use Torr\HtmlBuilder\Node\HtmlElement;
 
-final class JavaScriptFileType extends FileType
+final class JavaScriptFileType extends FileType implements ProcessableFileTypeInterface
 {
 	private FileInfoCommentGenerator $infoComment;
 
@@ -35,8 +37,17 @@ final class JavaScriptFileType extends FileType
 	{
 		return $this->infoComment->generateInfoComment($data->getAsset(), $data->getFilePath()) .
 			"\n" .
-			parent::processForDebug($data);
+			$data->getContent();
 	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function processForProduction(FileProcessData $data) : string
+	{
+		return $data->getContent();
+	}
+
 
 	/**
 	 * @inheritDoc
@@ -47,33 +58,21 @@ final class JavaScriptFileType extends FileType
 		return false;
 	}
 
-	/**
-	 * @inheritDoc
-	 */
-	public function shouldBeStreamed() : bool
-	{
-		return false;
-	}
-
 
 	/**
 	 * @inheritDoc
 	 */
-	public function createHtmlIncludeElement (string $url, array $attributes = []) : HtmlElement
+	public function createHtmlIncludeElement (string $url, AssetInterface $asset, array $attributes = []) : HtmlElement
 	{
 		$attrs = new HtmlAttributes($attributes);
 		$attrs->set("defer", true);
 		$attrs->set("src", $url);
 
+		if ($asset instanceof StoredAsset)
+		{
+			$attrs->set("integrity", "{$asset->getHashAlgorithm()}-{$asset->getHash()}");
+		}
+
 		return new HtmlElement("script", $attrs);
-	}
-
-
-	/**
-	 * @inheritDoc
-	 */
-	public function isEmbeddable () : bool
-	{
-		return true;
 	}
 }

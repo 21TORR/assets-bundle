@@ -2,12 +2,13 @@
 
 namespace Torr\Assets\File\Type;
 
+use Torr\Assets\Asset\AssetInterface;
 use Torr\Assets\File\Data\FileProcessData;
 use Torr\Assets\File\Type\Header\FileInfoCommentGenerator;
 use Torr\HtmlBuilder\Node\HtmlAttributes;
 use Torr\HtmlBuilder\Node\HtmlElement;
 
-final class SvgFileType extends FileType
+final class SvgFileType extends FileType implements ProcessableFileTypeInterface
 {
 	private FileInfoCommentGenerator $infoComment;
 
@@ -34,7 +35,7 @@ final class SvgFileType extends FileType
 	public function processForDebug (FileProcessData $data) : string
 	{
 		// the comment must be at the bottom, as otherwise the SVG would become invalid
-		return parent::processForDebug($data) .
+		return $data->getContent() .
 			"\n" .
 			$this->infoComment->generateInfoComment($data->getAsset(), $data->getFilePath());
 	}
@@ -42,23 +43,15 @@ final class SvgFileType extends FileType
 	/**
 	 * @inheritDoc
 	 */
-	public function isEmbeddable () : bool
+	public function processForProduction(FileProcessData $data) : string
 	{
-		return true;
+		return $data->getContent();
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function shouldBeStreamed() : bool
-	{
-		return false;
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function createHtmlIncludeElement (string $url, array $attributes = []) : HtmlElement
+	public function createHtmlIncludeElement (string $url, AssetInterface $asset, array $attributes = []) : HtmlElement
 	{
 		$attrs = new HtmlAttributes($attributes);
 		$attrs->set("alt", "");

@@ -3,7 +3,6 @@
 namespace Torr\Assets\Manager;
 
 use Psr\Cache\CacheItemPoolInterface;
-use Torr\Assets\Storage\AssetMap;
 
 final class CacheManager
 {

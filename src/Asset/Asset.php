@@ -5,7 +5,7 @@ namespace Torr\Assets\Asset;
 use Torr\Assets\Exception\Asset\InvalidAssetException;
 use Torr\Rad\Exception\UnexpectedTypeException;
 
-final class Asset
+final class Asset implements AssetInterface
 {
 	public const NAMESPACE_REGEX = "^[a-zA-Z][a-zA-Z0-9_-]*?$";
 	public const PATH_REGEX = "^([a-zA-Z0-9_\\-.]+/)*[a-zA-Z0-9_\\-.]+$";

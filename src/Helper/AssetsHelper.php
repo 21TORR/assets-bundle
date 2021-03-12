@@ -6,6 +6,7 @@ use Torr\Assets\Asset\Asset;
 use Torr\Assets\Exception\File\NotEmbeddableAssetException;
 use Torr\Assets\File\FileLoader;
 use Torr\Assets\File\FileTypeRegistry;
+use Torr\Assets\File\Type\ProcessableFileTypeInterface;
 use Torr\Assets\Html\AssetHtmlIncluder;
 use Torr\Assets\Routing\AssetUrlGenerator;
 
@@ -45,7 +46,7 @@ final class AssetsHelper
 		$asset = Asset::create($assetPath);
 		$fileType = $this->fileTypeRegistry->getFileType($asset);
 
-		if (!$fileType->isEmbeddable())
+		if (!$fileType instanceof ProcessableFileTypeInterface)
 		{
 			throw new NotEmbeddableAssetException(\sprintf(
 				"File '%s' of type '%s' is not embeddable.",
