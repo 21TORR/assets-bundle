@@ -50,7 +50,7 @@ final class AssetStorage
 		bool $shouldHashFileName
 	) : StoredAsset
 	{
-		$sourceFilePath =
+		$sourceFilePath = $this->namespaceRegistry->getAssetFilePath($asset);
 		$fileName = \basename($asset->getPath());
 		$fileDir = \dirname($asset->getPath());
 		$hash = \base64_encode(
