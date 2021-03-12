@@ -5,6 +5,7 @@ namespace Torr\Assets\Storage;
 use Symfony\Component\Filesystem\Filesystem;
 use Torr\Assets\Asset\Asset;
 use Torr\Assets\Asset\StoredAsset;
+use Torr\Assets\Namespaces\NamespaceRegistry;
 
 final class AssetStorage
 {
@@ -13,11 +14,13 @@ final class AssetStorage
 	private Filesystem $filesystem;
 	private string $storageDir;
 	private string $outputDir;
+	private NamespaceRegistry $namespaceRegistry;
 
 	/**
 	 */
 	public function __construct (
 		Filesystem $filesystem,
+		NamespaceRegistry $namespaceRegistry,
 		string $publicDir,
 		string $outputDir
 	)
@@ -25,6 +28,7 @@ final class AssetStorage
 		$this->filesystem = $filesystem;
 		$this->outputDir = \trim($outputDir, "/");
 		$this->storageDir = "{$publicDir}/{$this->outputDir}";
+		$this->namespaceRegistry = $namespaceRegistry;
 	}
 
 
@@ -40,15 +44,20 @@ final class AssetStorage
 	/**
 	 * Stores the given asset
 	 */
-	public function storeAsset (
+	public function storeProcessableAsset (
 		Asset $asset,
-		string $content,
+		?string $content,
 		bool $shouldHashFileName
 	) : StoredAsset
 	{
+		$sourceFilePath =
 		$fileName = \basename($asset->getPath());
 		$fileDir = \dirname($asset->getPath());
-		$hash = \base64_encode(\hash(self::HASH_ALGORITHM, $content, true));
+		$hash = \base64_encode(
+			null !== $content
+				? \hash(self::HASH_ALGORITHM, $content, true)
+				: \hash_file(self::HASH_ALGORITHM, $sourceFilePath, true)
+		);
 
 		if ("." !== $fileDir)
 		{
@@ -62,7 +71,13 @@ final class AssetStorage
 
 		$storagePath = $fileDir . $fileName;
 		$targetPath = "{$this->storageDir}/{$asset->getNamespace()}/{$storagePath}";
-		$this->filesystem->dumpFile($targetPath, $content);
+
+		if (null !== $content) {
+			$this->filesystem->dumpFile($targetPath, $content);
+		}
+		else {
+			$this->filesystem->copy($sourceFilePath, $targetPath);
+		}
 
 		return new StoredAsset(
 			$asset,

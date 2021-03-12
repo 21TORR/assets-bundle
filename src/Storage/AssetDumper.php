@@ -7,6 +7,7 @@ use Symfony\Component\Finder\Finder;
 use Torr\Assets\Asset\Asset;
 use Torr\Assets\File\FileLoader;
 use Torr\Assets\File\FileTypeRegistry;
+use Torr\Assets\File\Type\ProcessableFileTypeInterface;
 use Torr\Assets\Namespaces\NamespaceRegistry;
 use Torr\Rad\Command\TorrCliStyle;
 
@@ -157,8 +158,10 @@ final class AssetDumper
 				continue;
 			}
 
-			$content = $this->fileLoader->loadForProduction($assetMap, $asset);
-			$storedAsset = $this->storage->storeAsset($asset, $content, $fileType->shouldHashFileName());
+			$content = $fileType instanceof ProcessableFileTypeInterface
+				? $this->fileLoader->loadForProduction($assetMap, $asset)
+				: null;
+			$storedAsset = $this->storage->storeProcessableAsset($asset, $content, $fileType->shouldHashFileName());
 
 			$assetMap->add($storedAsset);
 		}

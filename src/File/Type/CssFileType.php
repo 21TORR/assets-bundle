@@ -10,7 +10,7 @@ use Torr\Assets\File\Type\Header\FileInfoCommentGenerator;
 use Torr\HtmlBuilder\Node\HtmlAttributes;
 use Torr\HtmlBuilder\Node\HtmlElement;
 
-final class CssFileType extends FileType implements ServiceSubscriberInterface
+final class CssFileType extends FileType implements ProcessableFileTypeInterface, ServiceSubscriberInterface
 {
 	private FileInfoCommentGenerator $infoComment;
 	private ContainerInterface $locator;
@@ -40,11 +40,12 @@ final class CssFileType extends FileType implements ServiceSubscriberInterface
 	 */
 	public function processForDebug (FileProcessData $data) : string
 	{
+		/** @var CssUrlRewriter $urlRewriter */
 		$urlRewriter = $this->locator->get(CssUrlRewriter::class);
 
 		return $this->infoComment->generateInfoComment($data->getAsset(), $data->getFilePath()) .
 			"\n" .
-			$urlRewriter->rewrite($data->getContent());
+			$urlRewriter->rewrite($data->getStorageMap(), $data->getContent());
 	}
 
 
@@ -78,22 +79,6 @@ final class CssFileType extends FileType implements ServiceSubscriberInterface
 		$attrs->set("href", $url);
 
 		return new HtmlElement("link", $attrs);
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function isEmbeddable () : bool
-	{
-		return true;
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function shouldBeStreamed() : bool
-	{
-		return false;
 	}
 
 

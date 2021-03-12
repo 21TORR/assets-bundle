@@ -17,23 +17,6 @@ abstract class FileType
 
 
 	/**
-	 * Processes the file for usage in production
-	 */
-	public function processForProduction (FileProcessData $data) : string
-	{
-		return $data->getContent();
-	}
-
-
-	/**
-	 * Processes the file for usage in debug
-	 */
-	public function processForDebug (FileProcessData $data) : string
-	{
-		return $data->getContent();
-	}
-
-	/**
 	 * Returns whether the file should be compressed
 	 */
 	public function shouldBeCompressed () : bool
@@ -62,23 +45,5 @@ abstract class FileType
 	public function createHtmlIncludeElement (string $url, array $attributes = []) : HtmlElement
 	{
 		throw new NoEmbedSupport();
-	}
-
-	/**
-	 * Returns whether the file can directly be embedded in to the page.
-	 */
-	public function isEmbeddable () : bool
-	{
-		return false;
-	}
-
-	/**
-	 * Returns whether the file should be streamed
-	 *
-	 * @todo remove and replace with ProcessableFileType instead.
-	 */
-	public function shouldBeStreamed () : bool
-	{
-		return true;
 	}
 }

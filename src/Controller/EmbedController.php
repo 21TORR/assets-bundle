@@ -11,6 +11,8 @@ use Torr\Assets\Exception\Asset\InvalidAssetException;
 use Torr\Assets\Exception\File\FileNotFoundException;
 use Torr\Assets\File\FileLoader;
 use Torr\Assets\File\FileTypeRegistry;
+use Torr\Assets\File\Type\ProcessableFileTypeInterface;
+use Torr\Assets\Manager\AssetsManager;
 use Torr\Assets\Namespaces\NamespaceRegistry;
 use Torr\Assets\Storage\AssetStorageMap;
 use Torr\Rad\Controller\BaseController;
@@ -23,6 +25,7 @@ final class EmbedController extends BaseController
 		FileTypeRegistry $fileTypeRegistry,
 		NamespaceRegistry $namespaceRegistry,
 		MimeTypesInterface $mimeTypes,
+		AssetsManager $assetsManager,
 		string $namespace,
 		string $path
 	) : Response
@@ -30,20 +33,22 @@ final class EmbedController extends BaseController
 		try
 		{
 			$asset = new Asset($namespace, $path);
-			$assetMap = new AssetStorageMap();
 			$fileType = $fileTypeRegistry->getFileType($asset);
 
-			if ($fileType->shouldBeStreamed())
+			if ($fileType instanceof ProcessableFileTypeInterface)
 			{
-				$response = new BinaryFileResponse($namespaceRegistry->getAssetFilePath($asset));
-			}
-			else
-			{
+				$assetMap = $assetsManager->getStorageMap();
+
 				$response = new Response(
 					$kernel->isDebug()
 						? $fileLoader->loadForDebug($assetMap, $asset)
 						: $fileLoader->loadForProduction($assetMap, $asset),
 				);
+
+			}
+			else
+			{
+				$response = new BinaryFileResponse($namespaceRegistry->getAssetFilePath($asset));
 			}
 
 			$response->headers->set(

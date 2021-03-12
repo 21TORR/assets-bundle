@@ -7,7 +7,7 @@ use Torr\Assets\File\Type\Header\FileInfoCommentGenerator;
 use Torr\HtmlBuilder\Node\HtmlAttributes;
 use Torr\HtmlBuilder\Node\HtmlElement;
 
-final class JavaScriptFileType extends FileType
+final class JavaScriptFileType extends FileType implements ProcessableFileTypeInterface
 {
 	private FileInfoCommentGenerator $infoComment;
 
@@ -35,8 +35,17 @@ final class JavaScriptFileType extends FileType
 	{
 		return $this->infoComment->generateInfoComment($data->getAsset(), $data->getFilePath()) .
 			"\n" .
-			parent::processForDebug($data);
+			$data->getContent();
 	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function processForProduction(FileProcessData $data) : string
+	{
+		return $data->getContent();
+	}
+
 
 	/**
 	 * @inheritDoc
@@ -44,14 +53,6 @@ final class JavaScriptFileType extends FileType
 	public function shouldHashFileName () : bool
 	{
 		// the file names will already be hashed by your build tool, hopefully
-		return false;
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function shouldBeStreamed() : bool
-	{
 		return false;
 	}
 
@@ -66,14 +67,5 @@ final class JavaScriptFileType extends FileType
 		$attrs->set("src", $url);
 
 		return new HtmlElement("script", $attrs);
-	}
-
-
-	/**
-	 * @inheritDoc
-	 */
-	public function isEmbeddable () : bool
-	{
-		return true;
 	}
 }

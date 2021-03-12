@@ -4,7 +4,9 @@ namespace Torr\Assets\File;
 
 use Torr\Assets\Asset\Asset;
 use Torr\Assets\Exception\File\FileNotFoundException;
+use Torr\Assets\Exception\File\NotProcessableFileTypeException;
 use Torr\Assets\File\Data\FileProcessData;
+use Torr\Assets\File\Type\ProcessableFileTypeInterface;
 use Torr\Assets\Namespaces\NamespaceRegistry;
 use Torr\Assets\Storage\AssetStorageMap;
 
@@ -30,6 +32,14 @@ final class FileLoader
 		$processData = new FileProcessData($asset, $content, $filePath, $assetMap);
 		$fileType = $this->fileTypeRegistry->getFileType($asset);
 
+		if (!$fileType instanceof ProcessableFileTypeInterface)
+		{
+			throw new NotProcessableFileTypeException(\sprintf(
+				"The asset is of a non-processable file type: %s",
+				\get_class($fileType)
+			));
+		}
+
 		return $fileType->processForProduction($processData);
 	}
 
@@ -42,6 +52,14 @@ final class FileLoader
 		[$filePath, $content] = $this->fetchFileContents($asset);
 		$processData = new FileProcessData($asset, $content, $filePath, $assetMap);
 		$fileType = $this->fileTypeRegistry->getFileType($asset);
+
+		if (!$fileType instanceof ProcessableFileTypeInterface)
+		{
+			throw new NotProcessableFileTypeException(\sprintf(
+				"The asset is of a non-processable file type: %s",
+				\get_class($fileType)
+			));
+		}
 
 		return $fileType->processForDebug($processData);
 	}
