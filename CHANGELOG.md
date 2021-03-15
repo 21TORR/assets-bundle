@@ -1,4 +1,4 @@
-1.0.1 (unreleased)
+1.0.1
 =====
 
 *   (improvement) Integrate cache clearer in `AssetManager`.
