@@ -33,7 +33,7 @@ final class AssetsDumpCommand extends Command
 		$io->title("Assets: Dump all assets");
 
 		$io->section("Clear AssetMapCache, AssetDependencyCollectionCache and dump directory");
-		$this->assetsManager->clearAll();
+		$this->assetsManager->clearStorageCache();
 		$io->writeln("<fg=green>Done</>");
 		$io->newLine();
 
