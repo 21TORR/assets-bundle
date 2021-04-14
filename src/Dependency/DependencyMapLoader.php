@@ -77,7 +77,7 @@ final class DependencyMapLoader implements CacheClearerInterface
 
 		try
 		{
-			$data = \json_decode(\file_get_contents($dependenciesFile), true, 512, \JSON_THROW_ON_ERROR);
+			$data = \json_decode((string) \file_get_contents($dependenciesFile), true, 512, \JSON_THROW_ON_ERROR);
 
 			if (!\is_array($data))
 			{
@@ -156,6 +156,8 @@ final class DependencyMapLoader implements CacheClearerInterface
 
 	/**
 	 * Returns whether the given value is a string array
+	 *
+	 * @param mixed $entries
 	 */
 	private function isStringArray ($entries) : bool
 	{
@@ -198,9 +200,9 @@ final class DependencyMapLoader implements CacheClearerInterface
 	/**
 	 * Clears the cache
 	 */
-	public function clear(string $cacheDir)
+	public function clear (string $cacheDir = "") : void
 	{
-		return $this->cache->delete(self::CACHE_KEY);
+		$this->cache->delete(self::CACHE_KEY);
 	}
 
 
@@ -209,7 +211,7 @@ final class DependencyMapLoader implements CacheClearerInterface
 	 */
 	public function refresh () : void
 	{
-		$this->clear("");
+		$this->clear();
 		$this->load();
 	}
 }

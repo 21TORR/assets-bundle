@@ -23,7 +23,7 @@ class CssUrlRewriter
 	 */
 	public function rewrite (AssetStorageMap $storageMap, string $content) : string
 	{
-		return \preg_replace_callback(
+		return (string) \preg_replace_callback(
 			'~url\\(\\s*(?<path>.*?)\\s*\\)~i',
 			function (array $match) use ($storageMap)
 			{

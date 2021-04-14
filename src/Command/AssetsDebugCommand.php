@@ -6,10 +6,10 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
-use Torr\Cli\Console\Style\TorrStyle;
 use function Symfony\Component\String\u;
 use Torr\Assets\File\FileTypeRegistry;
 use Torr\Assets\Namespaces\NamespaceRegistry;
+use Torr\Cli\Console\Style\TorrStyle;
 
 final class AssetsDebugCommand extends Command
 {

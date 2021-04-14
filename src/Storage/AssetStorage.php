@@ -55,8 +55,8 @@ final class AssetStorage
 		$fileDir = \dirname($asset->getPath());
 		$hash = \base64_encode(
 			null !== $content
-				? \hash(self::HASH_ALGORITHM, $content, true)
-				: \hash_file(self::HASH_ALGORITHM, $sourceFilePath, true)
+				? (string) \hash(self::HASH_ALGORITHM, $content, true)
+				: (string) \hash_file(self::HASH_ALGORITHM, $sourceFilePath, true)
 		);
 
 		if ("." !== $fileDir)
