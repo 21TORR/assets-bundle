@@ -9,7 +9,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 use function Symfony\Component\String\u;
 use Torr\Assets\File\FileTypeRegistry;
 use Torr\Assets\Namespaces\NamespaceRegistry;
-use Torr\Rad\Command\TorrCliStyle;
+use Torr\Cli\Console\Style\TorrStyle;
 
 final class AssetsDebugCommand extends Command
 {
@@ -41,7 +41,7 @@ final class AssetsDebugCommand extends Command
 	 */
 	protected function execute (InputInterface $input, OutputInterface $output) : int
 	{
-		$io = new TorrCliStyle($input, $output);
+		$io = new TorrStyle($input, $output);
 		$io->title("Assets: Debug");
 
 		$this->printNamespaces($io);
@@ -52,7 +52,7 @@ final class AssetsDebugCommand extends Command
 
 	/**
 	 */
-	private function printNamespaces (TorrCliStyle $io) : void
+	private function printNamespaces (TorrStyle $io) : void
 	{
 		$io->section("Namespaces");
 		$rows = [];
@@ -94,7 +94,7 @@ final class AssetsDebugCommand extends Command
 	/**
 	 * Prints all file types
 	 */
-	private function printFileTypes (TorrCliStyle $io) : void
+	private function printFileTypes (TorrStyle $io) : void
 	{
 		$io->section("File Types");
 		$extensionMapping = $this->fileTypeRegistry->getExtensionMapping();

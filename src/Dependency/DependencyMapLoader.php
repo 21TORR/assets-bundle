@@ -59,7 +59,7 @@ final class DependencyMapLoader implements CacheClearerInterface
 
 		foreach ($this->namespaceRegistry->getNamespaces() as $namespace)
 		{
-			$path = $this->namespaceRegistry->getAssetFilePath(new Asset($namespace, "js/_dependencies.json"));
+			$path = $this->namespaceRegistry->getAssetFilePath(new Asset($namespace, "_dependencies.json"));
 			$this->importDependenciesFile($map, $namespace, $path);
 		}
 
@@ -77,7 +77,7 @@ final class DependencyMapLoader implements CacheClearerInterface
 
 		try
 		{
-			$data = \json_decode(\file_get_contents($dependenciesFile), true, 512, \JSON_THROW_ON_ERROR);
+			$data = \json_decode((string) \file_get_contents($dependenciesFile), true, 512, \JSON_THROW_ON_ERROR);
 
 			if (!\is_array($data))
 			{
@@ -90,38 +90,39 @@ final class DependencyMapLoader implements CacheClearerInterface
 
 			foreach ($data as $entryFilePath => $dependencyEntries)
 			{
-				if (!$this->isValid($dependencyEntries))
-				{
-					$this->logger->error("Invalid dependencies content in '{filePath}': invalid entries", [
-						"filePath" => $dependenciesFile,
-					]);
+				$entryAsset = new Asset($namespace, $entryFilePath);
 
-					return;
+				if ($this->isStringArray($dependencyEntries))
+				{
+					$this->registerDependencies($dependencyMap, $entryAsset, $dependencyEntries);
+					continue;
 				}
 
-				$entryAsset = new Asset($namespace, "js/{$entryFilePath}");
-
-				foreach ($dependencyEntries["modern"] as $entry)
+				if ($this->isValidModernLegacy($dependencyEntries))
 				{
-					$dependencyMap->registerDependency(
+					// modern is always available
+					$this->registerDependencies(
+						$dependencyMap,
 						$entryAsset,
-						new AssetDependency(
-							new Asset($namespace, "js/{$entry}"),
-							["type" => "module"]
-						)
+						$dependencyEntries["modern"],
+						["type" => "module"]
 					);
-				}
 
-				foreach ($dependencyEntries["legacy"] as $entry)
-				{
-					$dependencyMap->registerDependency(
-						$entryAsset,
-						new AssetDependency(
-							new Asset($namespace, "js/{$entry}"),
+					if (isset($dependencyEntries["legacy"]))
+					{
+						$this->registerDependencies(
+							$dependencyMap,
+							$entryAsset,
+							$dependencyEntries["legacy"],
 							["nomodule" => true]
-						)
-					);
+						);
+					}
+					continue;
 				}
+
+				$this->logger->error("Invalid dependencies content in '{filePath}': invalid entries", [
+					"filePath" => $dependenciesFile,
+				]);
 			}
 		}
 		catch (\JsonException $exception)
@@ -140,48 +141,77 @@ final class DependencyMapLoader implements CacheClearerInterface
 	 *
 	 * @param mixed $entries
 	 */
-	private function isValid ($entries) : bool
+	private function isValidModernLegacy ($entries) : bool
 	{
-		if (!\is_array($entries) || !isset($entries["modern"], $entries["legacy"]))
+		// must array and the `modern` key exist
+		if (!\is_array($entries) || !isset($entries["modern"]) || !$this->isStringArray($entries["modern"]))
 		{
 			return false;
 		}
 
+		// if the `legacy` key exists, it must be valid, otherwise it is valid with just the modern key
+		return !isset($entries["legacy"]) || $this->isStringArray($entries["legacy"]);
+	}
 
-		foreach ($entries as $values)
+
+	/**
+	 * Returns whether the given value is a string array
+	 *
+	 * @param mixed $entries
+	 */
+	private function isStringArray ($entries) : bool
+	{
+		if (!\is_array($entries))
 		{
-			if (!\is_array($values))
+			return false;
+		}
+
+		foreach ($entries as $value)
+		{
+			if (!\is_string($value))
 			{
 				return false;
-			}
-
-			foreach ($values as $value)
-			{
-				if (!\is_string($value))
-				{
-					return false;
-				}
 			}
 		}
 
 		return true;
 	}
 
+	/**
+	 * Registers the given dependencies (file paths) as asset dependencies
+	 *
+	 * @param string[] $dependencies
+	 */
+	private function registerDependencies (DependencyMap $map, Asset $entry, array $dependencies, array $attributes = []) : void
+	{
+		foreach ($dependencies as $dependency)
+		{
+			$map->registerDependency(
+				$entry,
+				new AssetDependency(
+					new Asset($entry->getNamespace(), $dependency),
+					$attributes
+				)
+			);
+		}
+	}
+
 
 	/**
 	 * Clears the cache
 	 */
-	public function clear(string $cacheDir)
+	public function clear (string $cacheDir = "") : void
 	{
-		return $this->cache->delete(self::CACHE_KEY);
+		$this->cache->delete(self::CACHE_KEY);
 	}
+
 
 	/**
 	 * Refreshes the dependencies map
 	 */
 	public function refresh () : void
 	{
-		$this->clear("");
+		$this->clear();
 		$this->load();
 	}
 }

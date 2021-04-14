@@ -7,7 +7,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Torr\Assets\Dependency\DependencyMapLoader;
 use Torr\Assets\Manager\AssetsManager;
-use Torr\Rad\Command\TorrCliStyle;
+use Torr\Cli\Console\Style\TorrStyle;
 
 final class AssetsDumpCommand extends Command
 {
@@ -29,7 +29,7 @@ final class AssetsDumpCommand extends Command
 	 */
 	protected function execute (InputInterface $input, OutputInterface $output) : int
 	{
-		$io = new TorrCliStyle($input, $output);
+		$io = new TorrStyle($input, $output);
 		$io->title("Assets: Dump all assets");
 
 		$io->section("Clear AssetMapCache, AssetDependencyCollectionCache and dump directory");

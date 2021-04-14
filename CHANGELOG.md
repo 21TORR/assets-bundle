@@ -1,3 +1,11 @@
+2.0.0 (unreleased)
+=====
+
+*   (bc) Adapt to new `_dependencies.json` storage directory + new layout.
+*   (bc) CSS files are not hashed anymore, as they are already hashed in Firefly.
+*   (bug) Fixed an invalid log message when dumping assets.
+
+
 1.0.1
 =====
 

@@ -71,6 +71,17 @@ final class CssFileType extends FileType implements ProcessableFileTypeInterface
 		return true;
 	}
 
+
+	/**
+	 * @inheritDoc
+	 */
+	public function shouldHashFileName () : bool
+	{
+		// the file names will already be hashed by your build tool, hopefully
+		return false;
+	}
+
+
 	/**
 	 * @inheritDoc
 	 */
