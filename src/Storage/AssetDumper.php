@@ -9,7 +9,7 @@ use Torr\Assets\File\FileLoader;
 use Torr\Assets\File\FileTypeRegistry;
 use Torr\Assets\File\Type\ProcessableFileTypeInterface;
 use Torr\Assets\Namespaces\NamespaceRegistry;
-use Torr\Rad\Command\TorrCliStyle;
+use Torr\Cli\Console\Style\TorrStyle;
 
 final class AssetDumper
 {
@@ -49,7 +49,7 @@ final class AssetDumper
 	/**
 	 * Dumps all namespaces
 	 */
-	public function dumpNamespaces (array $namespaces, ?TorrCliStyle $io = null) : AssetStorageMap
+	public function dumpNamespaces (array $namespaces, ?TorrStyle $io = null) : AssetStorageMap
 	{
 		if (null !== $io)
 		{
@@ -126,7 +126,7 @@ final class AssetDumper
 	 * @return Asset[] all skipped assets
 	 */
 	private function dumpAssets (
-		?TorrCliStyle $io,
+		?TorrStyle $io,
 		AssetStorageMap $assetMap,
 		array $assets,
 		bool $skipDeferred
@@ -173,7 +173,7 @@ final class AssetDumper
 			$io->writeln(\sprintf(
 				"<fg=green>-> Dumped %d %s assets</>",
 				\count($assets),
-				$skipDeferred ? "deferred" : "non-deferred"
+				$skipDeferred ? "non-deferred" : "deferred"
 			));
 			$io->newLine();
 		}
