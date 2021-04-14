@@ -1,3 +1,9 @@
+2.0.0 (unreleased)
+=====
+
+*   (bc) Adapt to new `_dependencies.json` storage directory + new layout.
+
+
 1.0.1
 =====
 
