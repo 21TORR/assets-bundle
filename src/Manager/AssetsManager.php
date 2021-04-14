@@ -7,7 +7,7 @@ use Symfony\Component\HttpKernel\CacheClearer\CacheClearerInterface;
 use Torr\Assets\Namespaces\NamespaceRegistry;
 use Torr\Assets\Storage\AssetDumper;
 use Torr\Assets\Storage\AssetStorageMap;
-use Torr\Rad\Command\TorrCliStyle;
+use Torr\Cli\Console\Style\TorrStyle;
 
 final class AssetsManager implements CacheClearerInterface
 {
@@ -49,7 +49,7 @@ final class AssetsManager implements CacheClearerInterface
 
 	/**
 	 */
-	private function dumpAssets (?TorrCliStyle $io = null) : AssetStorageMap
+	private function dumpAssets (?TorrStyle $io = null) : AssetStorageMap
 	{
 		$storageMap = $this->assetDumper->dumpNamespaces(
 			$this->namespaceRegistry->getNamespaces(),
@@ -66,7 +66,7 @@ final class AssetsManager implements CacheClearerInterface
 
 	/**
 	 */
-	public function reimport (?TorrCliStyle $io) : void
+	public function reimport (?TorrStyle $io) : void
 	{
 		if (null !== $io)
 		{
