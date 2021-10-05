@@ -1,3 +1,9 @@
+2.0.1
+=====
+
+*   (bug) Support registering paths on Windows.
+
+
 2.0.0
 =====
 

@@ -2,6 +2,7 @@
 
 namespace Torr\Assets\Namespaces;
 
+use Symfony\Component\Filesystem\Filesystem;
 use Torr\Assets\Asset\Asset;
 use Torr\Assets\Exception\Namespaces\DuplicateNamespaceException;
 use Torr\Assets\Exception\Namespaces\InvalidNamespacePathException;
@@ -14,12 +15,16 @@ final class NamespaceRegistry
 {
 	/** @var array<string, string> */
 	private array $namespaces = [];
+	/** @var Filesystem */
+	private Filesystem $filesystem;
 
 
 	/**
 	 */
 	public function __construct (array $projectNamespaces = [], ?string $projectDir = null)
 	{
+		$this->filesystem = new Filesystem();
+
 		if (empty($projectNamespaces))
 		{
 			return;
@@ -53,7 +58,7 @@ final class NamespaceRegistry
 		if (!$this->isValidPath($path))
 		{
 			throw new InvalidNamespacePathException(\sprintf(
-				"Invalid namespace path: '%s'. Namespace paths must be absolute and start with a '/'.",
+				"Invalid namespace path: '%s'. Namespace paths must be absolute.",
 				$path
 			));
 		}
@@ -77,7 +82,7 @@ final class NamespaceRegistry
 	 */
 	private function isValidPath (string $path) : bool
 	{
-		return "/" === $path[0];
+		return $this->filesystem->isAbsolutePath($path);
 	}
 
 
