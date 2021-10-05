@@ -26,7 +26,7 @@ final class EmbedController extends BaseController
 		MimeTypesInterface $mimeTypes,
 		AssetsManager $assetsManager,
 		string $namespace,
-		string $path
+		string $path,
 	) : Response
 	{
 		try
@@ -52,7 +52,7 @@ final class EmbedController extends BaseController
 
 			$response->headers->set(
 				"Content-Type",
-				$mimeTypes->getMimeTypes((string) $asset->getExtension())[0] ?? "application/octet-stream"
+				$mimeTypes->getMimeTypes((string) $asset->getExtension())[0] ?? "application/octet-stream",
 			);
 
 			return $response;
@@ -61,7 +61,7 @@ final class EmbedController extends BaseController
 		{
 			throw $this->createNotFoundException(
 				"Asset not found: @{$namespace}/{$path}",
-				$exception
+				$exception,
 			);
 		}
 	}

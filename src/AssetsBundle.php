@@ -28,7 +28,7 @@ final class AssetsBundle extends Bundle
 
 				$container->getDefinition(NamespaceRegistry::class)
 					->setArgument('$projectNamespaces', $config["namespaces"]);
-			}
+			},
 		);
 	}
 

@@ -36,7 +36,7 @@ final class FileLoader
 		{
 			throw new NotProcessableFileTypeException(\sprintf(
 				"The asset is of a non-processable file type: %s",
-				\get_class($fileType)
+				\get_class($fileType),
 			));
 		}
 
@@ -57,7 +57,7 @@ final class FileLoader
 		{
 			throw new NotProcessableFileTypeException(\sprintf(
 				"The asset is of a non-processable file type: %s",
-				\get_class($fileType)
+				\get_class($fileType),
 			));
 		}
 
@@ -88,7 +88,7 @@ final class FileLoader
 				"Asset '%s' not %s at '%s'",
 				$asset->toAssetPath(),
 				\is_file($filePath) ? "found" : "readable",
-				$filePath
+				$filePath,
 			));
 		}
 

@@ -22,7 +22,7 @@ final class AssetStorage
 		Filesystem $filesystem,
 		NamespaceRegistry $namespaceRegistry,
 		string $publicDir,
-		string $outputDir
+		string $outputDir,
 	)
 	{
 		$this->filesystem = $filesystem;
@@ -47,7 +47,7 @@ final class AssetStorage
 	public function storeProcessableAsset (
 		Asset $asset,
 		?string $content,
-		bool $shouldHashFileName
+		bool $shouldHashFileName,
 	) : StoredAsset
 	{
 		$sourceFilePath = $this->namespaceRegistry->getAssetFilePath($asset);
@@ -55,8 +55,8 @@ final class AssetStorage
 		$fileDir = \dirname($asset->getPath());
 		$hash = \base64_encode(
 			null !== $content
-				? (string) \hash(self::HASH_ALGORITHM, $content, true)
-				: (string) \hash_file(self::HASH_ALGORITHM, $sourceFilePath, true)
+				? \hash(self::HASH_ALGORITHM, $content, true)
+				: (string) \hash_file(self::HASH_ALGORITHM, $sourceFilePath, true),
 		);
 
 		if ("." !== $fileDir)
@@ -83,7 +83,7 @@ final class AssetStorage
 			$asset,
 			$hash,
 			self::HASH_ALGORITHM,
-			$storagePath
+			$storagePath,
 		);
 	}
 

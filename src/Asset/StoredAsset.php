@@ -18,7 +18,7 @@ final class StoredAsset implements AssetInterface
 		Asset $asset,
 		string $hash,
 		string $hashAlgorithm,
-		string $storedFilePath
+		string $storedFilePath,
 	)
 	{
 		$this->asset = $asset;

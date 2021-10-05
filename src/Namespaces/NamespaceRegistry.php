@@ -15,7 +15,7 @@ final class NamespaceRegistry
 {
 	/** @var array<string, string> */
 	private array $namespaces = [];
-	/** @var Filesystem */
+	/**  */
 	private Filesystem $filesystem;
 
 
@@ -25,7 +25,7 @@ final class NamespaceRegistry
 	{
 		$this->filesystem = new Filesystem();
 
-		if (empty($projectNamespaces))
+		if ([] === $projectNamespaces)
 		{
 			return;
 		}
@@ -41,7 +41,7 @@ final class NamespaceRegistry
 		{
 			$this->register(
 				$name,
-				"{$projectDir}/" . \ltrim($path, "/")
+				"{$projectDir}/" . \ltrim($path, "/"),
 			);
 		}
 	}
@@ -59,7 +59,7 @@ final class NamespaceRegistry
 		{
 			throw new InvalidNamespacePathException(\sprintf(
 				"Invalid namespace path: '%s'. Namespace paths must be absolute.",
-				$path
+				$path,
 			));
 		}
 
@@ -69,7 +69,7 @@ final class NamespaceRegistry
 				"Can't register namespace '%s' with path '%s', as it is already registered with path '%s'",
 				$name,
 				$path,
-				$this->namespaces[$name]
+				$this->namespaces[$name],
 			));
 		}
 
@@ -99,7 +99,7 @@ final class NamespaceRegistry
 		{
 			throw new UnknownNamespaceException(\sprintf(
 				"Unknown namespace '%s'. Did you register it?",
-				$namespace
+				$namespace,
 			));
 		}
 

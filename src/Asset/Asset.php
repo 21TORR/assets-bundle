@@ -62,7 +62,7 @@ final class Asset implements AssetInterface
 			{
 				throw new InvalidAssetException(\sprintf(
 					"No /./ or /../ allow in asset path: '%s'.",
-					$assetPath
+					$assetPath,
 				));
 			}
 
@@ -72,7 +72,7 @@ final class Asset implements AssetInterface
 			{
 				throw new InvalidAssetException(\sprintf(
 					"Invalid asset path: '%s'. Must be '@namespace/path'",
-					$assetPath
+					$assetPath,
 				));
 			}
 
@@ -80,14 +80,14 @@ final class Asset implements AssetInterface
 			{
 				throw new InvalidAssetException(\sprintf(
 					"Invalid asset path, namespace must start with @: '%s'. Must be '@namespace/path'",
-					$assetPath
+					$assetPath,
 				));
 			}
 
 
 			return new self(
 				\substr($parts[0], 1),
-				$parts[1]
+				$parts[1],
 			);
 		}
 

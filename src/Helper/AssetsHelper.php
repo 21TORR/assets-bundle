@@ -29,7 +29,7 @@ final class AssetsHelper
 		FileTypeRegistry $fileTypeRegistry,
 		FileLoader $fileLoader,
 		AssetHtmlIncluder $assetHtmlIncluder,
-		AssetUrlGenerator $assetUrlGenerator
+		AssetUrlGenerator $assetUrlGenerator,
 	)
 	{
 		$this->fileTypeRegistry = $fileTypeRegistry;
@@ -51,7 +51,7 @@ final class AssetsHelper
 			throw new NotEmbeddableAssetException(\sprintf(
 				"File '%s' of type '%s' is not embeddable.",
 				$assetPath,
-				\get_class($fileType)
+				\get_class($fileType),
 			));
 		}
 

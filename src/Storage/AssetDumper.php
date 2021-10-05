@@ -27,7 +27,7 @@ final class AssetDumper
 		AssetStorage $storage,
 		NamespaceRegistry $namespaceRegistry,
 		FileLoader $fileLoader,
-		FileTypeRegistry $fileTypeRegistry
+		FileTypeRegistry $fileTypeRegistry,
 	)
 	{
 		$this->storage = $storage;
@@ -129,7 +129,7 @@ final class AssetDumper
 		?TorrStyle $io,
 		AssetStorageMap $assetMap,
 		array $assets,
-		bool $skipDeferred
+		bool $skipDeferred,
 	) : array
 	{
 		$skipped = [];
@@ -173,7 +173,7 @@ final class AssetDumper
 			$io->writeln(\sprintf(
 				"<fg=green>-> Dumped %d %s assets</>",
 				\count($assets),
-				$skipDeferred ? "non-deferred" : "deferred"
+				$skipDeferred ? "non-deferred" : "deferred",
 			));
 			$io->newLine();
 		}

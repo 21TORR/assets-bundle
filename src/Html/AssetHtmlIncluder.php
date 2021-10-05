@@ -24,7 +24,7 @@ final class AssetHtmlIncluder
 		AssetUrlGenerator $assetUrlGenerator,
 		FileTypeRegistry $fileTypeRegistry,
 		DependencyMapLoader $dependencyMapLoader,
-		AssetsManager $assetsManager
+		AssetsManager $assetsManager,
 	)
 	{
 		$this->htmlBuilder = new HtmlBuilder();
