@@ -23,7 +23,7 @@ jobs:
                     coverage: "none"
                     ini-values: "memory_limit=-1"
                     php-version: "${{ matrix.php }}"
-                    tools: "pecl, cs2pr"
+                    tools: "pecl, cs2pr, composer-normalize"
 
             -   name: Configure matchers
                 uses: mheap/phpunit-matcher-action@master
@@ -41,7 +41,7 @@ jobs:
                 run: composer-normalize --indent-style tab --indent-size 1 --dry-run --ansi
 
             -   name: PHP CS Fixer
-                run: "./vendor/bin/php-cs-fixer fix --diff --config vendor-bin/test/vendor/21torr/php-cs/.php_cs.dist --dry-run --no-interaction --ansi --format=checkstyle | cs2pr"
+                run: "./vendor/bin/php-cs-fixer fix --dry-run --diff --config vendor-bin/test/vendor/21torr/php-cs/.php-cs-fixer.dist.php --ansi --format=checkstyle | cs2pr"
                 env:
                     PHP_CS_FIXER_IGNORE_ENV: 1
 
