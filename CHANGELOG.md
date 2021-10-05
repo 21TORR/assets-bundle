@@ -1,3 +1,10 @@
+2.0.1
+=====
+
+*   (bug) Support registering paths on Windows.
+*   (improvement) Only support PHP 8.0.
+
+
 2.0.0
 =====
 

@@ -18,7 +18,7 @@ final class AssetUrlGenerator
 	public function __construct (
 		AssetsManager $assetsManager,
 		UrlGeneratorInterface $router,
-		bool $isDebug
+		bool $isDebug,
 	)
 	{
 		$this->assetsManager = $assetsManager;
@@ -49,7 +49,7 @@ final class AssetUrlGenerator
 			[
 				'namespace' => $toEmbed->getNamespace(),
 				'path' => $toEmbed->getPath(),
-			]
+			],
 		);
 	}
 }

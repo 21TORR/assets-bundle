@@ -11,7 +11,7 @@ jobs:
 
         strategy:
             matrix:
-                php: ['7.4', '8.0']
+                php: ['8.0', '8.1']
 
         steps:
             -   name: Checkout Code
@@ -23,7 +23,7 @@ jobs:
                     coverage: "none"
                     ini-values: "memory_limit=-1"
                     php-version: "${{ matrix.php }}"
-                    tools: "pecl, cs2pr"
+                    tools: "pecl, cs2pr, composer-normalize"
 
             -   name: Configure matchers
                 uses: mheap/phpunit-matcher-action@master
@@ -35,15 +35,13 @@ jobs:
                     php -i
 
             -   name: Install Composer
-                uses: php-actions/composer@v1
+                run: composer install --optimize-autoloader --classmap-authoritative --no-interaction
 
             -   name: Composer Normalize
-                uses: "docker://ergebnis/composer-normalize-action:latest"
-                with:
-                    args: "--indent-style tab --indent-size 1 --dry-run --ansi"
+                run: composer-normalize --indent-style tab --indent-size 1 --dry-run --ansi
 
             -   name: PHP CS Fixer
-                run: "./vendor/bin/php-cs-fixer fix --diff --config vendor-bin/test/vendor/21torr/php-cs/.php_cs.dist --dry-run --no-interaction --ansi --format=checkstyle | cs2pr"
+                run: "./vendor/bin/php-cs-fixer fix --dry-run --diff --config vendor-bin/test/vendor/21torr/php-cs/.php-cs-fixer.dist.php --ansi --format=checkstyle | cs2pr"
                 env:
                     PHP_CS_FIXER_IGNORE_ENV: 1
 

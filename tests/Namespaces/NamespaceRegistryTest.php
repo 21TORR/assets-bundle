@@ -132,4 +132,24 @@ final class NamespaceRegistryTest extends TestCase
 		], "/project");
 		$registry->register("test", "/abc2");
 	}
+
+
+	public function testRegistrationOnWindows () : void
+	{
+		$registry = new NamespaceRegistry();
+		$registry->register("test", "C:\\\\test");
+
+		self::assertSame("C:\\\\test", $registry->getNamespacePath("test"));
+	}
+
+
+	public function testRegistrationOnWindowsInConstructor () : void
+	{
+		$registry = new NamespaceRegistry([
+			"a" => "a"
+		], "C:\\\\test");
+
+		// yep, we will mix these slashes – PHP supports it
+		self::assertSame("C:\\\\test/a", $registry->getNamespacePath("a"));
+	}
 }

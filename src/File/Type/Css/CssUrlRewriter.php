@@ -25,11 +25,11 @@ class CssUrlRewriter
 	{
 		return (string) \preg_replace_callback(
 			'~url\\(\\s*(?<path>.*?)\\s*\\)~i',
-			function (array $match) use ($storageMap)
+			function (array $match) use ($storageMap) : string
 			{
 				return $this->replaceImport($storageMap, $match);
 			},
-			$content
+			$content,
 		);
 	}
 

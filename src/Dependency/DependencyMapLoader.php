@@ -26,7 +26,7 @@ final class DependencyMapLoader implements CacheClearerInterface
 		NamespaceRegistry $namespaceRegistry,
 		CacheInterface $cache,
 		LoggerInterface $logger,
-		bool $isDebug
+		bool $isDebug,
 	)
 	{
 		$this->namespaceRegistry = $namespaceRegistry;
@@ -105,7 +105,7 @@ final class DependencyMapLoader implements CacheClearerInterface
 						$dependencyMap,
 						$entryAsset,
 						$dependencyEntries["modern"],
-						["type" => "module"]
+						["type" => "module"],
 					);
 
 					if (isset($dependencyEntries["legacy"]))
@@ -114,7 +114,7 @@ final class DependencyMapLoader implements CacheClearerInterface
 							$dependencyMap,
 							$entryAsset,
 							$dependencyEntries["legacy"],
-							["nomodule" => true]
+							["nomodule" => true],
 						);
 					}
 					continue;
@@ -190,8 +190,8 @@ final class DependencyMapLoader implements CacheClearerInterface
 				$entry,
 				new AssetDependency(
 					new Asset($entry->getNamespace(), $dependency),
-					$attributes
-				)
+					$attributes,
+				),
 			);
 		}
 	}

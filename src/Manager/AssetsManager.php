@@ -24,7 +24,7 @@ final class AssetsManager implements CacheClearerInterface
 		NamespaceRegistry $namespaceRegistry,
 		AssetDumper $assetDumper,
 		CacheItemPoolInterface $cachePool,
-		bool $isDebug
+		bool $isDebug,
 	)
 	{
 		$this->namespaceRegistry = $namespaceRegistry;
@@ -53,7 +53,7 @@ final class AssetsManager implements CacheClearerInterface
 	{
 		$storageMap = $this->assetDumper->dumpNamespaces(
 			$this->namespaceRegistry->getNamespaces(),
-			$io
+			$io,
 		);
 
 		$cacheItem = $this->cachePool->getItem(self::STORAGE_MAP_CACHE_KEY);

@@ -25,7 +25,7 @@ final class AssetsDebugCommand extends Command
 	public function __construct (
 		NamespaceRegistry $namespaceRegistry,
 		FileTypeRegistry $fileTypeRegistry,
-		KernelInterface $kernel
+		KernelInterface $kernel,
 	)
 	{
 		parent::__construct();
@@ -86,7 +86,7 @@ final class AssetsDebugCommand extends Command
 
 		$io->table(
 			["Namespace", "Path"],
-			$rows
+			$rows,
 		);
 	}
 
@@ -111,7 +111,7 @@ final class AssetsDebugCommand extends Command
 
 		$io->table(
 			["Extension", "Path"],
-			$rows
+			$rows,
 		);
 	}
 }
