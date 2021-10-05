@@ -35,12 +35,10 @@ jobs:
                     php -i
 
             -   name: Install Composer
-                uses: php-actions/composer@v1
+                run: composer install --optimize-autoloader --classmap-authoritative --no-interaction
 
             -   name: Composer Normalize
-                uses: "docker://ergebnis/composer-normalize-action:latest"
-                with:
-                    args: "--indent-style tab --indent-size 1 --dry-run --ansi"
+                run: composer-normalize --indent-style tab --indent-size 1 --dry-run --ansi
 
             -   name: PHP CS Fixer
                 run: "./vendor/bin/php-cs-fixer fix --diff --config vendor-bin/test/vendor/21torr/php-cs/.php_cs.dist --dry-run --no-interaction --ansi --format=checkstyle | cs2pr"
