@@ -72,11 +72,17 @@ final class AssetStorage
 		$storagePath = $fileDir . $fileName;
 		$targetPath = "{$this->storageDir}/{$asset->getNamespace()}/{$storagePath}";
 
-		if (null !== $content) {
-			$this->filesystem->dumpFile($targetPath, $content);
-		}
-		else {
-			$this->filesystem->copy($sourceFilePath, $targetPath);
+
+		if (!$this->filesystem->exists($targetPath))
+		{
+			if (null !== $content)
+			{
+				$this->filesystem->dumpFile($targetPath, $content);
+			}
+			else
+			{
+				$this->filesystem->copy($sourceFilePath, $targetPath);
+			}
 		}
 
 		return new StoredAsset(
