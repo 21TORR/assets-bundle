@@ -1,3 +1,10 @@
+2.0.2
+=====
+
+*   (improvement) Remove CacheClearerInterface in AssetsManager 
+*   (improvement) Check if file exists in storeProcessableAsset AssetsStorage
+
+
 2.0.1
 =====
 
