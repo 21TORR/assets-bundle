@@ -3,13 +3,12 @@
 namespace Torr\Assets\Manager;
 
 use Psr\Cache\CacheItemPoolInterface;
-use Symfony\Component\HttpKernel\CacheClearer\CacheClearerInterface;
 use Torr\Assets\Namespaces\NamespaceRegistry;
 use Torr\Assets\Storage\AssetDumper;
 use Torr\Assets\Storage\AssetStorageMap;
 use Torr\Cli\Console\Style\TorrStyle;
 
-final class AssetsManager implements CacheClearerInterface
+final class AssetsManager
 {
 	private const STORAGE_MAP_CACHE_KEY = "21torr.assets.storage_map";
 	private NamespaceRegistry $namespaceRegistry;
@@ -106,13 +105,5 @@ final class AssetsManager implements CacheClearerInterface
 		}
 
 		return $this->storageMap;
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function clear(string $cacheDir) : void
-	{
-		$this->clearStorageCache();
 	}
 }
