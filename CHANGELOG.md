@@ -1,3 +1,9 @@
+2.0.4
+=====
+
+*   (improvement) Fix deprecations.
+
+
 2.0.3
 =====
 
