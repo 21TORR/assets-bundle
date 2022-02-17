@@ -10,7 +10,7 @@ final class AssetsBundleConfiguration implements ConfigurationInterface
 	/**
 	 * @inheritDoc
 	 */
-	public function getConfigTreeBuilder ()
+	public function getConfigTreeBuilder () : TreeBuilder
 	{
 		$tree = new TreeBuilder("assets");
 
