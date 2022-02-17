@@ -49,7 +49,7 @@ final class AssetsRouteLoader extends Loader
 	/**
 	 * @inheritDoc
 	 */
-	public function supports ($resource, ?string $type = null)
+	public function supports ($resource, ?string $type = null) : bool
 	{
 		return "assets-routes" === $type;
 	}

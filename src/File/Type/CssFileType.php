@@ -103,7 +103,7 @@ final class CssFileType extends FileType implements ProcessableFileTypeInterface
 	/**
 	 * @inheritDoc
 	 */
-	public static function getSubscribedServices ()
+	public static function getSubscribedServices () : array
 	{
 		return [
 			CssUrlRewriter::class,
