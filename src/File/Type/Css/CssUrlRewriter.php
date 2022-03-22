@@ -40,6 +40,12 @@ class CssUrlRewriter
 	{
 		$importPath = \trim($match["path"], " '\"");
 
+		// early exit for data URLs
+		if ("data:" === \substr($importPath, 0, 5))
+		{
+			return $match[0];
+		}
+
 		try {
 			$asset = Asset::create($importPath);
 			return \sprintf('url("%s")', $this->assetUrlGenerator->getUrl($asset, $storageMap));
