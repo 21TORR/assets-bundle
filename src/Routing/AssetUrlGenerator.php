@@ -9,6 +9,7 @@ use Torr\Assets\Storage\AssetStorageMap;
 
 final class AssetUrlGenerator
 {
+	public const FORCE_LOOKUP = true;
 	private AssetsManager $assetsManager;
 	private UrlGeneratorInterface $router;
 	private bool $isDebug;
@@ -30,7 +31,11 @@ final class AssetUrlGenerator
 	/**
 	 * Returns the url to the given asset
 	 */
-	public function getUrl (Asset $asset, ?AssetStorageMap $storageMap = null) : string
+	public function getUrl (
+		Asset $asset,
+		?AssetStorageMap $storageMap = null,
+		bool $forceLookup = false
+	) : string
 	{
 		if (null === $storageMap)
 		{
@@ -39,7 +44,7 @@ final class AssetUrlGenerator
 
 		$toEmbed = $asset;
 
-		if (!$this->isDebug)
+		if ($forceLookup || !$this->isDebug)
 		{
 			$toEmbed = $storageMap->get($asset);
 		}

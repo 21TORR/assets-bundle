@@ -47,7 +47,11 @@ final class CssFileType extends FileType implements ProcessableFileTypeInterface
 
 		return $this->infoComment->generateInfoComment($data->getAsset(), $data->getFilePath()) .
 			"\n" .
-			$urlRewriter->rewrite($data->getStorageMap(), $data->getContent());
+			$urlRewriter->rewrite(
+				$data->getAsset(),
+				$data->getStorageMap(),
+				$data->getContent()
+			);
 	}
 
 
@@ -59,7 +63,11 @@ final class CssFileType extends FileType implements ProcessableFileTypeInterface
 		/** @var CssUrlRewriter $urlRewriter */
 		$urlRewriter = $this->locator->get(CssUrlRewriter::class);
 
-		return $urlRewriter->rewrite($data->getStorageMap(), $data->getContent());
+		return $urlRewriter->rewrite(
+			$data->getAsset(),
+			$data->getStorageMap(),
+			$data->getContent()
+		);
 	}
 
 
