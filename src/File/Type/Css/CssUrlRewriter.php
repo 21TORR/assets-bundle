@@ -52,7 +52,7 @@ class CssUrlRewriter
 		{
 			$importPath = Path::join(
 				Path::getDirectory($baseAsset->toAssetPath()),
-				$importPath
+				$importPath,
 			);
 		}
 
@@ -61,7 +61,7 @@ class CssUrlRewriter
 			$asset = Asset::create($importPath);
 			return \sprintf(
 				'url("%s")',
-				$this->assetUrlGenerator->getUrl($asset, $storageMap, AssetUrlGenerator::FORCE_LOOKUP)
+				$this->assetUrlGenerator->getUrl($asset, $storageMap, AssetUrlGenerator::FORCE_LOOKUP),
 			);
 		}
 		catch (InvalidAssetException $exception)

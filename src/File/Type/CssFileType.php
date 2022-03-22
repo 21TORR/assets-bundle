@@ -50,7 +50,7 @@ final class CssFileType extends FileType implements ProcessableFileTypeInterface
 			$urlRewriter->rewrite(
 				$data->getAsset(),
 				$data->getStorageMap(),
-				$data->getContent()
+				$data->getContent(),
 			);
 	}
 
@@ -66,7 +66,7 @@ final class CssFileType extends FileType implements ProcessableFileTypeInterface
 		return $urlRewriter->rewrite(
 			$data->getAsset(),
 			$data->getStorageMap(),
-			$data->getContent()
+			$data->getContent(),
 		);
 	}
 

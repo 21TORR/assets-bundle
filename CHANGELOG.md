@@ -1,3 +1,11 @@
+2.1.0
+=====
+
+*   (feature) Properly support relative imports in CSS.
+*   (feature) Properly support `data:` URL imports in CSS.
+*   (improvement) Remove unused dependency on `21torr/rad`.
+
+
 2.0.4
 =====
 

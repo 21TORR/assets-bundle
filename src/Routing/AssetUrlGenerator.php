@@ -34,7 +34,7 @@ final class AssetUrlGenerator
 	public function getUrl (
 		Asset $asset,
 		?AssetStorageMap $storageMap = null,
-		bool $forceLookup = false
+		bool $forceLookup = false,
 	) : string
 	{
 		if (null === $storageMap)
