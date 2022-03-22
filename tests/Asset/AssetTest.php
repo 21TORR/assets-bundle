@@ -5,7 +5,6 @@ namespace Tests\Torr\Assets\Asset;
 use PHPUnit\Framework\TestCase;
 use Torr\Assets\Asset\Asset;
 use Torr\Assets\Exception\Asset\InvalidAssetException;
-use Torr\Rad\Exception\UnexpectedTypeException;
 
 final class AssetTest extends TestCase
 {
@@ -118,7 +117,7 @@ final class AssetTest extends TestCase
 	 */
 	public function testCreateInvalidType ($input) : void
 	{
-		$this->expectException(UnexpectedTypeException::class);
+		$this->expectException(InvalidAssetException::class);
 		Asset::create($input);
 	}
 

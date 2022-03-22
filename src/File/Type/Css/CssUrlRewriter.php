@@ -2,6 +2,7 @@
 
 namespace Torr\Assets\File\Type\Css;
 
+use Symfony\Component\Filesystem\Path;
 use Torr\Assets\Asset\Asset;
 use Torr\Assets\Exception\Asset\InvalidAssetException;
 use Torr\Assets\Routing\AssetUrlGenerator;
@@ -21,13 +22,13 @@ class CssUrlRewriter
 	/**
 	 * Find and replace namespaces in $content like url("@app/css/app.css") to url("/assets/app/css/app.css") if "@app/css/app.css" is defined
 	 */
-	public function rewrite (AssetStorageMap $storageMap, string $content) : string
+	public function rewrite (Asset $baseAsset, AssetStorageMap $storageMap, string $content) : string
 	{
 		return (string) \preg_replace_callback(
 			'~url\\(\\s*(?<path>.*?)\\s*\\)~i',
-			function (array $match) use ($storageMap) : string
+			function (array $match) use ($storageMap, $baseAsset) : string
 			{
-				return $this->replaceImport($storageMap, $match);
+				return $this->replaceImport($baseAsset, $storageMap, $match);
 			},
 			$content,
 		);
@@ -36,13 +37,32 @@ class CssUrlRewriter
 	/**
 	 * Replaces the single import with the resolved path
 	 */
-	private function replaceImport (AssetStorageMap $storageMap, array $match) : string
+	private function replaceImport (Asset $baseAsset, AssetStorageMap $storageMap, array $match) : string
 	{
 		$importPath = \trim($match["path"], " '\"");
 
-		try {
+		// early exit for data URLs
+		if (\str_starts_with($importPath, "data:"))
+		{
+			return $match[0];
+		}
+
+		// if not already namespaced path, try to resolve it
+		if (!\str_starts_with($importPath, "@"))
+		{
+			$importPath = Path::join(
+				Path::getDirectory($baseAsset->toAssetPath()),
+				$importPath,
+			);
+		}
+
+		try
+		{
 			$asset = Asset::create($importPath);
-			return \sprintf('url("%s")', $this->assetUrlGenerator->getUrl($asset, $storageMap));
+			return \sprintf(
+				'url("%s")',
+				$this->assetUrlGenerator->getUrl($asset, $storageMap, AssetUrlGenerator::FORCE_LOOKUP),
+			);
 		}
 		catch (InvalidAssetException $exception)
 		{

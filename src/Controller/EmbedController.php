@@ -2,6 +2,7 @@
 
 namespace Torr\Assets\Controller;
 
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -14,9 +15,8 @@ use Torr\Assets\File\FileTypeRegistry;
 use Torr\Assets\File\Type\ProcessableFileTypeInterface;
 use Torr\Assets\Manager\AssetsManager;
 use Torr\Assets\Namespaces\NamespaceRegistry;
-use Torr\Rad\Controller\BaseController;
 
-final class EmbedController extends BaseController
+final class EmbedController extends AbstractController
 {
 	public function embed (
 		FileLoader $fileLoader,
@@ -43,7 +43,6 @@ final class EmbedController extends BaseController
 						? $fileLoader->loadForDebug($assetMap, $asset)
 						: $fileLoader->loadForProduction($assetMap, $asset),
 				);
-
 			}
 			else
 			{

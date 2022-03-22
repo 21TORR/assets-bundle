@@ -3,7 +3,6 @@
 namespace Torr\Assets\Asset;
 
 use Torr\Assets\Exception\Asset\InvalidAssetException;
-use Torr\Rad\Exception\UnexpectedTypeException;
 
 final class Asset implements AssetInterface
 {
@@ -84,14 +83,17 @@ final class Asset implements AssetInterface
 				));
 			}
 
-
 			return new self(
 				\substr($parts[0], 1),
 				$parts[1],
 			);
 		}
 
-		throw new UnexpectedTypeException($assetPath, "string or " . self::class);
+		throw new InvalidAssetException(\sprintf(
+			'Expected argument of type string or %s, "%s" given',
+			self::class,
+			\get_debug_type($assetPath),
+		));
 	}
 
 
