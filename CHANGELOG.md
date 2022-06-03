@@ -1,7 +1,7 @@
 2.1.1
 =====
 
-* (improvement) Disable profiler in embed controller
+* (improvement) Disable profiler in embed controller.
 
 
 2.1.0
