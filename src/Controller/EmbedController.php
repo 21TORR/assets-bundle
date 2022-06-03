@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\HttpKernel\Profiler\Profiler;
 use Symfony\Component\Mime\MimeTypesInterface;
 use Torr\Assets\Asset\Asset;
 use Torr\Assets\Exception\Asset\InvalidAssetException;
@@ -25,10 +26,14 @@ final class EmbedController extends AbstractController
 		NamespaceRegistry $namespaceRegistry,
 		MimeTypesInterface $mimeTypes,
 		AssetsManager $assetsManager,
+		?Profiler $profiler,
 		string $namespace,
 		string $path,
 	) : Response
 	{
+		// disable profiler
+		$profiler?->disable();
+
 		try
 		{
 			$asset = new Asset($namespace, $path);
