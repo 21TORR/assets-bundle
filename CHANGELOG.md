@@ -1,3 +1,9 @@
+2.1.2
+=====
+
+* (improvement) Fix deprecated command definition.
+
+
 2.1.1
 =====
 
