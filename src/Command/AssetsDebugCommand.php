@@ -2,6 +2,7 @@
 
 namespace Torr\Assets\Command;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -11,9 +12,9 @@ use Torr\Assets\File\FileTypeRegistry;
 use Torr\Assets\Namespaces\NamespaceRegistry;
 use Torr\Cli\Console\Style\TorrStyle;
 
+#[AsCommand("21torr:assets:debug")]
 final class AssetsDebugCommand extends Command
 {
-	protected static $defaultName = "21torr:assets:debug";
 	private NamespaceRegistry $namespaceRegistry;
 	private FileTypeRegistry $fileTypeRegistry;
 	private KernelInterface $kernel;

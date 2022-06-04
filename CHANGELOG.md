@@ -1,3 +1,10 @@
+2.1.2
+=====
+
+* (improvement) Fix deprecated command definition.
+* (improvement) Require Symfony 5.4+.
+
+
 2.1.1
 =====
 

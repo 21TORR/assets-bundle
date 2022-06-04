@@ -2,6 +2,7 @@
 
 namespace Torr\Assets\Command;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -9,9 +10,9 @@ use Torr\Assets\Dependency\DependencyMapLoader;
 use Torr\Assets\Manager\AssetsManager;
 use Torr\Cli\Console\Style\TorrStyle;
 
+#[AsCommand("21torr:assets:dump")]
 final class AssetsDumpCommand extends Command
 {
-	protected static $defaultName = "21torr:assets:dump";
 	private AssetsManager $assetsManager;
 	private DependencyMapLoader $dependencyMapLoader;
 
