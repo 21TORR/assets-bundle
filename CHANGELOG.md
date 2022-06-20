@@ -1,3 +1,9 @@
+2.1.3
+=====
+
+* (improvement) Properly handle all invalid request.
+
+
 2.1.2
 =====
 

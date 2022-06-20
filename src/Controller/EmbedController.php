@@ -9,8 +9,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\HttpKernel\Profiler\Profiler;
 use Symfony\Component\Mime\MimeTypesInterface;
 use Torr\Assets\Asset\Asset;
-use Torr\Assets\Exception\Asset\InvalidAssetException;
-use Torr\Assets\Exception\File\FileNotFoundException;
+use Torr\Assets\Exception\AssetsException;
 use Torr\Assets\File\FileLoader;
 use Torr\Assets\File\FileTypeRegistry;
 use Torr\Assets\File\Type\ProcessableFileTypeInterface;
@@ -61,7 +60,7 @@ final class EmbedController extends AbstractController
 
 			return $response;
 		}
-		catch (FileNotFoundException | InvalidAssetException $exception)
+		catch (AssetsException $exception)
 		{
 			throw $this->createNotFoundException(
 				"Asset not found: @{$namespace}/{$path}",
