@@ -4,6 +4,7 @@ namespace Torr\Assets\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\HttpKernel\Profiler\Profiler;
@@ -60,7 +61,7 @@ final class EmbedController extends AbstractController
 
 			return $response;
 		}
-		catch (AssetsException $exception)
+		catch (AssetsException|FileNotFoundException $exception)
 		{
 			throw $this->createNotFoundException(
 				"Asset not found: @{$namespace}/{$path}",

@@ -1,3 +1,9 @@
+2.1.4
+=====
+
+* (bug) Properly catch missing files exception.
+
+
 2.1.3
 =====
 
