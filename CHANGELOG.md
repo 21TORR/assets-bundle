@@ -1,3 +1,10 @@
+2.1.5
+=====
+
+* (internal) Require latest version of HtmlBuilder.
+* (internal) Change minimum PHP version to `8.1`.
+
+
 2.1.4
 =====
 
