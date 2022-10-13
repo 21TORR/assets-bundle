@@ -1,3 +1,9 @@
+2.1.6
+=====
+
+* (improvement) Bump all dependencies to their latest version.
+
+
 2.1.5
 =====
 
