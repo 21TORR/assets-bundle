@@ -1,6 +1,12 @@
 🖼️ Assets
 =========
 
+> ⚠️ **This repository is archived!**
+>
+> The package will not receive any further updates.
+> Use [`symfony/asset`](https://packagist.org/packages/symfony/asset) instead.
+
+
 Fully integrated high-performance asset handling for Symfony projects. Works best with [Firefly] projects.
 
 
